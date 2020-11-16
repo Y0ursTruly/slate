@@ -1,0 +1,167 @@
+<script>
+//................................................................................................................................
+var gggg; //this is for the interval that asks your local listener for messages it recieved
+window.onbeforeunload = ()=>{
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true);
+    xhd.setRequestHeader("off", "yes");
+    xhd.send();
+}
+var myUname = "";
+function signStruct(key, Uname) {
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true); ///main server eventually
+    xhd.setRequestHeader("s", "yes");
+    xhd.setRequestHeader("p", key);
+    xhd.setRequestHeader("n", Uname);
+    xhd.send();
+    xhd.onload = function() {
+        document.getElementById("info").innerHTML = xhd.response;
+    }
+    
+}
+
+function getMessages () {
+//interval
+//var aio = 0;
+gggg = setInterval(function () {
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true); ///should be localhost when separate user systems are in place
+    xhd.setRequestHeader("s", "either");
+    //xhd.setRequestHeader("num", aio.toString());
+    xhd.send(); var abcde = setTimeout(()=>{if(xhd.status === 0){alert("Batch/Shell operation on your device isn't running anymore. Application Restart Required Before Browser Tab can Run again");}}, 7000);
+    xhd.onload = function() {
+        if (xhd.responseText != "") {
+            if(xhd.getResponseHeader("oi") === "yes"){document.getElementById("toChange").innerHTML += xhd.response;}
+            else{alert("Your Session Has Been Timed Out. Resetting"); location.reload();}
+            //aio++;
+        }
+    }
+}, 2000);
+//interval
+}
+
+function logStruct(key, Uname) {
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true); ///main server eventually
+    xhd.setRequestHeader("s", "no");
+    xhd.setRequestHeader("p", key);
+    xhd.setRequestHeader("n", Uname);
+    xhd.send();
+    xhd.onload = function() {
+        var xl = xhd.response;
+        if (xl === Uname) {
+            document.getElementById("info").innerHTML = "Log In Successful";
+            loginScreen(Uname);
+            myUname = Uname;
+        }
+        else if (xl === "Invalid") {
+            document.getElementById("info").innerHTML = "You Attempted to Log In with Incorrect Username and/or Password";
+        }
+        else if (xl === "Incorrect") {
+            document.getElementById("info").innerHTML = "You Attempted to Log In with Incorrect Username and/or Password";
+        }
+        else if (xl === "Already") {document.getElementById("info").innerHTML = "This Account is already Logged In Once";}
+        else {document.getElementById("info").innerHTML = xl;}
+    }
+}
+
+//................;;
+function loginScreen (user) {
+var welcome = ("Welcome, " + user);
+var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">` + welcome + `</div><button onclick="logOut();">Logout</button></kbd><br><br /><input id="sName" placeholder="Room Name"><input id="sKey" placeholder="Room Password" type="Password"><button onclick="createRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Create Room</button><button onclick="joinRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Join Room</button>
+<span style="color: lightgreen; background-color: teal" title="PEC, or Private Encryption Configuration" innerText="no" id="z">With PEC?</span><select id="za" innerTEXT="no" name="PEC">
+    <option id="dc1" >no</option>
+    <option id="dc2" >yes</option>
+</select>
+<button onclick="var toSend = prompt('Enter File Name in format [name of chat room this is for] WITHOUT the brackets'); var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
+document.getElementById("toChange").innerHTML = theText; getMessages();
+}
+
+function loginScreenn (user) {
+var welcome = ("Welcome to Room '" + user + "'");
+var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">` + welcome + `</div><button onclick="logOut();">Logout</button></kbd><br><input id="myInput" title="say something" placeholder="say something"><button onclick="sendMessage(document.getElementById('myInput').value);">Send Message</button><br /><input id="sName" placeholder="Room Name"><input id="sKey" placeholder="Room Password" type="Password"><button onclick="createRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Create Room</button><button onclick="joinRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Join Room</button>
+<span style="color: lightgreen; background-color: teal" title="PEC, or Private Encryption Configuration" innerText="no" id="z">With PEC?</span><select id="za" innerTEXT="no" name="PEC">
+    <option id="dc1" >no</option>
+    <option id="dc2" >yes</option>
+</select>
+<button onclick="var toSend = prompt('Enter File Name in format [name of chat room this is for] WITHOUT the brackets'); var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
+document.getElementById("toChange").innerHTML = theText;
+}
+//................;;
+function logoutScreen () {
+var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">ENTRY PAGE</div></kbd><br><input id="keys" style="align: left;" title="Username" placeholder="Username"></br><br><input id="logs" style="align: left;" title="Password" type="Password" placeholder="Password"></br><br><button onclick="logStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Login</kbd></button><button onclick="signStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Sign Up</kbd></button></br>`;
+document.getElementById("toChange").innerHTML = theText;
+}
+
+//]]]]]]]]
+
+function logOut () {
+var xhd = new XMLHttpRequest();
+xhd.open('POST', window.location.href, true);
+xhd.setRequestHeader("s", "logout");
+xhd.send();
+xhd.onload = function () {clearInterval(gggg); logoutScreen();}
+}
+
+//'''''''''''''
+function createRoom (name, code) {
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true);
+    xhd.setRequestHeader("s", "createRoom");
+    xhd.setRequestHeader("n", name);
+    xhd.setRequestHeader("p", code);
+    xhd.setRequestHeader("z", document.getElementById('za').value);
+    xhd.send();
+    xhd.onload = function () {if (xhd.responseText === "Success") {document.getElementById("info").innerHTML = xhd.responseText + " in Creating Room " + name;} else {document.getElementById("info").innerHTML = xhd.responseText;}}
+}
+//'''''''''''''
+function joinRoom (name, code) {
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true);
+    xhd.setRequestHeader("s", "joinRoom");
+    xhd.setRequestHeader("n", name);
+    xhd.setRequestHeader("p", code);
+    xhd.setRequestHeader("z", document.getElementById('za').value);
+    xhd.send();
+    xhd.onload = function () {if (xhd.responseText === "Success") {loginScreenn(name);} else {document.getElementById("info").innerHTML = xhd.responseText;}}
+}    
+//'''''''''''''
+
+//]]]]]]]]
+
+function sendMessage (theMessage) {
+    var xhd = new XMLHttpRequest();
+    xhd.open('POST', window.location.href, true); ///should be localhost when separate user systems are in place
+    xhd.setRequestHeader("s", "neither");
+    xhd.setRequestHeader("m", theMessage);
+    xhd.send();
+}
+
+</script>
+
+<link rel="shortcut icon" href="https://cdn.pixabay.com/photo/2014/04/03/10/52/circle-311551_960_720.png" type="image/x-icon"/>
+<title>Slate</title>
+<body id = "toChange">
+<kbd><div id="info" style="position: right; height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">ENTRY PAGE</div></kbd>
+<br><input id="keys" style="align: left;" title="Username" placeholder="Username"></br>
+<br><input id="logs" style="align: left;" title="Password" type="Password" placeholder="Password"></br>
+<br>
+<button onclick="logStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Login</kbd></button>
+<button onclick="signStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Sign Up</kbd></button>
+</br>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

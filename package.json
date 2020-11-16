@@ -1,0 +1,36 @@
+{
+  "name": "slate",
+  "version": "1.0.5",
+  "description": "What's said here is stored nowhere. User to User Communication is independent of the main-server. LIVE communication only, because of data not being stored. Once you Reload, it's a Clean Slate",
+  "main": "none",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Y0ursTruly/slate.git"
+  },
+  "keywords": [
+    "npm",
+    "git",
+    "main-server-independant",
+    "forum",
+    "encrypted",
+    "communication",
+    "communication-system",
+    "slate",
+    "clean-slate",
+    "server",
+    "network"
+  ],
+  "author": "Paul R. Y. Taylor",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Y0ursTruly/slate/issues"
+  },
+  "homepage": "https://github.com/Y0ursTruly/slate#readme",
+  "dependencies": {
+    "ngrok": "^3.2.7",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
