@@ -1,7 +1,7 @@
 <script>
 //................................................................................................................................
 var gggg; //this is for the interval that asks your local listener for messages it recieved
-window.onbeforeunload = ()=>{
+window.onbeforeunload = function(){
     var xhd = new XMLHttpRequest();
     xhd.open('POST', window.location.href, true);
     xhd.setRequestHeader("off", "yes");
@@ -24,7 +24,32 @@ function signStruct(key, Uname) {
 function getMessages () {
 //interval
 //var aio = 0;
-gggg = setInterval(function () {
+  function prepareElem(text){
+    var i=text.indexOf("</b>")+4
+    var text0=text.substr(0,i)
+    var text1=text.substr(i)
+    var toReturn=document.createElement('div')
+    toReturn.innerHTML=text0
+    var textVar=document.createElement('span')
+    textVar.innerText=text1
+    toReturn.appendChild(textVar)
+    return toReturn
+  }
+  function notYou(text){
+    toReturn=prepareElem(text)
+    toReturn.style='width: 500px; height: 70px; background-color: red; margin: 5px;'
+    return(toReturn)
+  }
+  function you(text){
+    toReturn=prepareElem(text)
+    toReturn.style='width: 500px; height: 70px; background-color: lightgreen; margin: 5px; margin-left: 200px;'
+    return(toReturn)
+  }
+  function parse(resp){
+    var response=JSON.parse(resp)
+    return response.map(a=>{ if(a.you){return(you(a.text))}return(notYou(a.text)) })
+  }
+  gggg = setInterval(function () {
     var xhd = new XMLHttpRequest();
     xhd.open('POST', window.location.href, true); ///should be localhost when separate user systems are in place
     xhd.setRequestHeader("s", "either");
@@ -32,12 +57,11 @@ gggg = setInterval(function () {
     xhd.send(); var abcde = setTimeout(()=>{if(xhd.status === 0){alert("Batch/Shell operation on your device isn't running anymore. Application Restart Required Before Browser Tab can Run again");}}, 7000);
     xhd.onload = function() {
         if (xhd.responseText != "") {
-            if(xhd.getResponseHeader("oi") === "yes"){document.getElementById("toChange").innerHTML += xhd.response;}
+            if(xhd.getResponseHeader("oi") === "yes"){if(xhd.responseText.length>2){document.getElementById("myInput").value="";parse(xhd.responseText).forEach(a=>{document.getElementById("toChange").appendChild(a)})}}
             else{alert("Your Session Has Been Timed Out. Resetting"); location.reload();}
-            //aio++;
         }
     }
-}, 2000);
+  }, 2000);
 //interval
 }
 
@@ -129,8 +153,9 @@ function joinRoom (name, code) {
 //'''''''''''''
 
 //]]]]]]]]
-
+setInterval(function(){var x=document.getElementById('myInput');if(x){if(!x.onkeypress){x.onkeypress=function(ev){if(ev.keyCode==13){sendMessage(x.value)}}}}},30)
 function sendMessage (theMessage) {
+    document.getElementById('myInput').value=""
     var xhd = new XMLHttpRequest();
     xhd.open('POST', window.location.href, true); ///should be localhost when separate user systems are in place
     xhd.setRequestHeader("s", "neither");
