@@ -9,3 +9,4 @@ Version 1.0.2: Also called 'Simultaneous Login Fix' because it removed glitch wh
 Version 1.0.3: All online communications in Slate, even the Values of EVERY header are all ENCRYPTED
 Version 1.0.4: Bug Fixes, main one being no overlap between encrypted communication between user to user AND user and main-server
 Version 1.0.5: Added a Windows executeable along with the Linux executeable of Slate, also added all the dependencies for program execution ready-made. Also, closing browser connection triggers the shell process to end, ensuring user doesn't keep shell process on accidentally
+Version 1.0.6: What the user types is seen as text and not html(this problem existed and the solution was to switch WHERE the text gets the element properties from shell to browser)
