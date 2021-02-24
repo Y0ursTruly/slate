@@ -16,7 +16,7 @@ It may take a while, but make sure everything is downloaded(extra setup that was
 To run, activate the executeable file that has the name of your Operating System in it. AFTER this, open up a tab on "localhost:8082" and you will be connected
 
 # Please Note
-There is no static mainserverlocation yet. As the updates keep coming, the main server's location is going to change, so you might want to stay updated. My email is paulrytaylor@gmail.com for questions(or if u want to tell me to use source code instead of executeables)
+There is no static mainserverlocation yet. As the updates keep coming, the main server's location is going to change, so you might want to stay updated(as of recent, those changes are going to become rather RARE). My email is paulrytaylor@gmail.com for questions(or if u want to tell me to use source code instead of executeables)
 #
 IF for some reason you closed/reloaded the browser tab(the one on "localhost:8082"), it is VERY LIKELY that the shell part(the running executeable) would shut down(to ensure that you don't leave it still running by accident). To anyone using my software, my question is: IS THIS A GOOD FEATURE?
 
