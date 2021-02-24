@@ -129,14 +129,14 @@ var x = http.createServer(function (req, res) {
     }
     else if (req.headers.s === "either" && req.headers.host === "localhost:8082") {
       //aoi = req.headers.num * 1;
-      res.setHeader("oi", oi); var instaText = "";
+      res.setHeader("oi", oi); var instaText = [];
       for (var i = 0; i < theChat.length; i++) {
-        if (pii[i] === theName) {instaText += "<div class='you' align='right' style='width: 500px; height: 70px; background-color: lightgreen; margin: 5px; margin-left: 200px;'>";}
-        else {instaText += "<div class='notYou' style='width: 500px; height: 70px; background-color: red; margin: 5px;'>";}
-        instaText += commDecrypt(theCode, theChat[i], pKeyy);
-        instaText += "</div>";
-      } res.write(instaText);
-      theChat = []; pii = [];
+        instaText[i]={}
+        if (pii[i] === theName) {instaText[i].you=true}
+        else {instaText[i].you=false}
+        instaText[i].text=commDecrypt(theCode, theChat[i], pKeyy)
+      }
+      res.write(JSON.stringify(instaText)); theChat = []; pii = []
       clearTimeout(toAll.toTimeout); startTimeout();
       pKey = ""; res.end();
     }
