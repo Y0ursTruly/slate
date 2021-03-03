@@ -76,8 +76,10 @@ function search (theItem, theList) {
     return(ifTrue);
 }
 
+function _logout () {var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "logout")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send();}
 function startInterval () {toAll.toInterval = setInterval(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "killT")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send();}, 3000);}
-function startTimeout () {toAll.toTimeout = setTimeout(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "logout")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send(); clearInterval(toAll.toInterval); oi="no"}, 5000);}
+//function startTimeout () {toAll.toTimeout = setTimeout(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "logout")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send(); clearInterval(toAll.toInterval); oi="no"}, 5000);} ///logout if localhost stops asking for text(action stopped since it creates useless flaws)
+
 function randomWarning () {
 let lenp = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ">", "<", "-", "_", "+", "=", "{", ":", "\\", "[", "]", "|", ",", ".", "?", "/", "}", ";", " "];
     var aToi = Math.random() * 10; aToi += 10; aToi = Math.floor(aToi);
@@ -112,7 +114,7 @@ xhr.onload = function(){console.log(JSON.parse(xhr.responseText)["ip"]);}
 
 var x = http.createServer(function (req, res) {
   if (req.method === "GET") {
-    res.write(siter); res.end();
+    delete(toAll.closed); res.write(siter); res.end();
   }
   else if (req.method === "POST") {
     if (req.headers.s === "neither" && req.headers.host === "localhost:8082") {
@@ -137,7 +139,7 @@ var x = http.createServer(function (req, res) {
         instaText[i].text=commDecrypt(theCode, theChat[i], pKeyy)
       }
       res.write(JSON.stringify(instaText)); theChat = []; pii = []
-      clearTimeout(toAll.toTimeout); startTimeout();
+      //clearTimeout(toAll.toTimeout); startTimeout(); ///logout if localhost stops asking for text(action stopped since it creates useless flaws)
       pKey = ""; res.end();
     }
     else if (req.headers.s === "no" && req.headers.n != undefined && req.headers.p != undefined && req.headers.host === "localhost:8082") {
@@ -149,7 +151,7 @@ var x = http.createServer(function (req, res) {
         xhd.setRequestHeader("n", commEncrypt(pKet, req.headers.n));
         xhd.setRequestHeader("ip", commEncrypt(pKet, myAddr));
         xhd.send();
-        xhd.onload = function() {if (xhd.responseText === req.headers.n) {isLogged = true; theName = req.headers.n; theKey = req.headers.p; startTimeout(); startInterval();} res.write(xhd.responseText); res.end();}
+        xhd.onload = function() {if (xhd.responseText === req.headers.n) {isLogged = true; theName = req.headers.n; theKey = req.headers.p; /*startTimeout();*/ startInterval();} res.write(xhd.responseText); res.end();}
       }//FIND IP
       else{res.end("Your Device's host is already logged in to an account. CANNOT Login TWICE");} //verification of simultaneous login on one device also verified by main-server BTW :)
     }
@@ -169,7 +171,7 @@ var x = http.createServer(function (req, res) {
       xhd.setRequestHeader("n", commEncrypt(pKet, theName));
       xhd.setRequestHeader("p", commEncrypt(pKet, theKey));
       xhd.send();
-      xhd.onload = function () {isLogged = false; res.write(xhd.responseText); clearInterval(toAll.toInterval); clearTimeout(toAll.toTimeout); res.end();} //even if incorrect data is entered here, because of afk rules on the mainserver, you would still logout
+      xhd.onload = function () {isLogged = false; res.write(xhd.responseText); clearInterval(toAll.toInterval); /*clearTimeout(toAll.toTimeout);*/ res.end();} //even if incorrect data is entered here, because of afk rules on the mainserver, you would still logout
     }
     else if (req.headers.s === "createRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined && req.headers.host === "localhost:8082") { var zz = req.headers.z;
       var xhd = new XMLHttpRequest();
@@ -217,7 +219,7 @@ var x = http.createServer(function (req, res) {
       var obj = {}; obj.leno = leno; obj.lepo = lepo; obj.Aletter = Aletter; obj.o34 = o34; obj.o35 = o35; obj.o36 = o36;   var mm = req.headers.m; if (req.headers.m === undefined || req.headers.m === "") {mm = "not named_"+randomise();} fs.writeFile(__dirname + '/JSON/('+mm+').json', JSON.stringify(obj), (err) => {if (err) throw err;});
        res.write("Successfully Created Config File"); res.end();
     }
-    else if(req.headers.off=="yes"&&req.headers.host === "localhost:8082"){console.log('browser session ended');process.exit(0)} //program ends when browser connection is closed, so that you don't accidentally leave this open
+    else if(req.headers.off=="yes"&&req.headers.host === "localhost:8082"){res.end();_logout();toAll.closed=true;setTimeout(()=>{if(!toAll.closed){return;}console.log('browser session ended');process.exit(0);},500)} //program ends when browser connection is closed(and now action stops if it's just a reload), so that you don't accidentally leave this open
     else if (req.headers.host === myAddr) { res.write("For Security Reasons, you must access your local slate app at 'localhost:8082'"); res.end(); }
     else {
       res.write("Invalid Request Parameters. Who ARE you?"); res.end();
