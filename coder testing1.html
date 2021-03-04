@@ -20,7 +20,7 @@ function signStruct(key, Uname) {
     }
     
 }
-
+let pec=()=>{var toSend = prompt('Enter Chat Room Name(that you want PEC file for)'); if(!toSend){return alert("ACTION CANCELLED");} var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}}
 function getMessages () {
 //interval
 //var aio = 0;
@@ -100,7 +100,7 @@ var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 2
     <option id="dc1" >no</option>
     <option id="dc2" >yes</option>
 </select>
-<button onclick="(()=>{var toSend = prompt('Enter Chat Room Name(that you want PEC file for)'); if(!toSend){return alert("ACTION CANCELLED");} var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}})()" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
+<button onclick="pec()" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
 document.getElementById("toChange").innerHTML = theText; getMessages();
 }
 
@@ -111,7 +111,7 @@ var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 2
     <option id="dc1" >no</option>
     <option id="dc2" >yes</option>
 </select>
-<button onclick="var toSend = prompt('Enter File Name in format [name of chat room this is for] WITHOUT the brackets'); var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
+<button onclick="pec()" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
 document.getElementById("toChange").innerHTML = theText;
 }
 //................;;
