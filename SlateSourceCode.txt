@@ -76,7 +76,10 @@ function search (theItem, theList) {
     return(ifTrue);
 }
 
-function _logout () {var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "logout")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send();}
+function _logout (res) {
+  var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "logout")); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.send();
+  xhd.onload = function () {isLogged = false; res.write(xhd.responseText); clearInterval(toAll.toInterval); /*clearTimeout(toAll.toTimeout);*/ res.end();} //even if incorrect data is entered here, because of afk rules on the mainserver, you would still logout
+}
 function startInterval () {toAll.toInterval = setInterval(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "killT")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send();}, 3000);}
 //function startTimeout () {toAll.toTimeout = setTimeout(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(pKet, "logout")); xhd.setRequestHeader("p", commEncrypt(pKet, theKey)); xhd.setRequestHeader("n", commEncrypt(pKet, theName)); xhd.send(); clearInterval(toAll.toInterval); oi="no"}, 5000);} ///logout if localhost stops asking for text(action stopped since it creates useless flaws)
 
@@ -165,13 +168,7 @@ var x = http.createServer(function (req, res) {
       xhd.onload = function() {res.write(xhd.responseText); res.end();}
     }
     else if (req.headers.s === "logout" && req.headers.host === "localhost:8082") {
-      var xhd = new XMLHttpRequest();
-      xhd.open('POST', msl, true);
-      xhd.setRequestHeader("s", commEncrypt(pKet, "logout"));
-      xhd.setRequestHeader("n", commEncrypt(pKet, theName));
-      xhd.setRequestHeader("p", commEncrypt(pKet, theKey));
-      xhd.send();
-      xhd.onload = function () {isLogged = false; res.write(xhd.responseText); clearInterval(toAll.toInterval); /*clearTimeout(toAll.toTimeout);*/ res.end();} //even if incorrect data is entered here, because of afk rules on the mainserver, you would still logout
+      _logout(res)
     }
     else if (req.headers.s === "createRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined && req.headers.host === "localhost:8082") { var zz = req.headers.z;
       var xhd = new XMLHttpRequest();
@@ -219,7 +216,7 @@ var x = http.createServer(function (req, res) {
       var obj = {}; obj.leno = leno; obj.lepo = lepo; obj.Aletter = Aletter; obj.o34 = o34; obj.o35 = o35; obj.o36 = o36;   var mm = req.headers.m; if (req.headers.m === undefined || req.headers.m === "") {mm = "not named_"+randomise();} fs.writeFile(__dirname + '/JSON/('+mm+').json', JSON.stringify(obj), (err) => {if (err) throw err;});
        res.write("Successfully Created Config File"); res.end();
     }
-    else if(req.headers.off=="yes"&&req.headers.host === "localhost:8082"){res.end();_logout();toAll.closed=true;setTimeout(()=>{if(!toAll.closed){return;}console.log('browser session ended');process.exit(0);},500)} //program ends when browser connection is closed(and now action stops if it's just a reload), so that you don't accidentally leave this open
+    else if(req.headers.off=="yes"&&req.headers.host === "localhost:8082"){_logout(res);toAll.closed=true;setTimeout(()=>{if(!toAll.closed){return;}console.log('browser session ended');process.exit(0);},500)} //program ends when browser connection is closed(and now action stops if it's just a reload), so that you don't accidentally leave this open
     else if (req.headers.host === myAddr) { res.write("For Security Reasons, you must access your local slate app at 'localhost:8082'"); res.end(); }
     else {
       res.write("Invalid Request Parameters. Who ARE you?"); res.end();
