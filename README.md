@@ -23,8 +23,13 @@ IF for some reason you closed/reloaded the browser tab(the one on "localhost:808
 # Private Encryption Configuration(PEC)
 For The Private Encryption Configuration(PEC) option you would see in the your browser(Once Logged In) is taking advantage of a third aspect of the encryption for Slate.
 <br>There is are some example (1 *Custom* and 1 *Normal*) groups you can try: **My Chat**(*Normal one*) and **Custom Chat**(*Custom one*)
-<br>The *Custom one* uses the **Private Encryption Configuration** and you will see the respective *(Custom Chat).json* file in the *JSON* folder
-<br>This third aspect of the Slate encryption uses a *ledger* which is basically a different *alphabet* that the encryption system would work with. *().json* is the default *ledger*
+#
+<br>For **My Chat**, make sure the *PEC* option is set to *no*(it is like this as default) and the password is *asdf*
+<br>For **Custom Chat**, make sure the *PEC* option is set to *yes* and the password is *don't enter*. The PEC config file(*I also call it a ledger*) comes with this repository
+<br>*However you can experiment using 2 machines with different ledgers(different config files for PEC), then instead of a message and you will see the system text basically saying that it can't decrypt received message*
+#
+The *Custom one* uses the **Private Encryption Configuration** and you will see the respective *(Custom Chat).json* file in the *JSON* folder
+<br>This third aspect of the Slate encryption uses a *"PEC config file", or "ledger"* which is basically a different *alphabet* that the encryption system would work with. The *().json* file is the default *ledger*(for communicating to mainserver)
 <br>Because of this ledger system, even if you have the password for a group, if you don't have their ledger, the information would still be scrambled like eggs to you
 #
 With the simple change of the 'alphabet' it uses and the encryption changes form drastically. So in the future, even if the encryption method is known, the secrecy granted by the encryption would still be potent.
