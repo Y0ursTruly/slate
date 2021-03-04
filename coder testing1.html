@@ -29,6 +29,7 @@ function getMessages () {
     var text0=text.substr(0,i)
     var text1=text.substr(i)
     var toReturn=document.createElement('div')
+    if(i==3){toReturn.innerHTML='<b><i style="color:yellow">MESSAGE WITH DIFFERENT ENCRYPTION LEDGER</i></b>'; return toReturn}
     toReturn.innerHTML=text0
     var textVar=document.createElement('span')
     textVar.innerText=text1
@@ -42,6 +43,7 @@ function getMessages () {
   }
   function you(text){
     toReturn=prepareElem(text)
+    if(toReturn.innerHTML=='<b><i style="color:yellow">MESSAGE WITH DIFFERENT ENCRYPTION LEDGER</i></b>'){toReturn.innerHTML="<b><i style='color:red'>MESSAGE WITH DIFFERENT ENCRYPTION LEDGER<br>Please Ensure you have a proper LEDGER for THIS chat room</i></b>"}
     toReturn.style='width: 500px; height: 70px; background-color: lightgreen; margin: 5px; margin-left: 200px;'
     return(toReturn)
   }
@@ -54,14 +56,14 @@ function getMessages () {
     xhd.open('POST', window.location.href, true); ///should be localhost when separate user systems are in place
     xhd.setRequestHeader("s", "either");
     //xhd.setRequestHeader("num", aio.toString());
-    xhd.send(); var abcde = setTimeout(()=>{if(xhd.status === 0){alert("Batch/Shell operation on your device isn't running anymore. Application Restart Required Before Browser Tab can Run again");}}, 7000);
+    xhd.send(); var abcde = setTimeout(()=>{if(xhd.status === 0){alert("Batch/Shell operation on your device isn't running anymore. Application Restart Required Before Browser Tab can Run again");window.close()}}, 500);
     xhd.onload = function() {
         if (xhd.responseText != "") {
             if(xhd.getResponseHeader("oi") === "yes"){if(xhd.responseText.length>2){document.getElementById("myInput").value="";parse(xhd.responseText).forEach(a=>{document.getElementById("toChange").appendChild(a)})}}
-            else{alert("Your Session Has Been Timed Out. Resetting"); location.reload();}
+            //else{alert("Your Session Has Been Timed Out. Resetting"); location.reload();} ///logout if localhost stops asking for text(action stopped since it creates useless flaws)
         }
     }
-  }, 2000);
+  }, 200);
 //interval
 }
 
@@ -98,7 +100,7 @@ var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 2
     <option id="dc1" >no</option>
     <option id="dc2" >yes</option>
 </select>
-<button onclick="var toSend = prompt('Enter File Name in format [name of chat room this is for] WITHOUT the brackets'); var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
+<button onclick="(()=>{var toSend = prompt('Enter Chat Room Name(that you want PEC file for)'); if(!toSend){return alert("ACTION CANCELLED");} var xhd = new XMLHttpRequest(); xhd.open('POST', window.location.href, true); xhd.setRequestHeader('s', 'makeJSON'); xhd.setRequestHeader('m', toSend); xhd.send(); xhd.onload = function () {alert(xhd.responseText);}})()" title="PEC, or Private Encryption Configuration">Create Config File for PEC</button>`;
 document.getElementById("toChange").innerHTML = theText; getMessages();
 }
 
