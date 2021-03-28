@@ -21,7 +21,12 @@
     "slate",
     "clean-slate",
     "server",
-    "network"
+    "network",
+    "ledger",
+    "mesh-networks",
+    "decentralized",
+    "pec",
+    "decentralized-applications"
   ],
   "author": "Paul R. Y. Taylor",
   "license": "Apache-2.0",
