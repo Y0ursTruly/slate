@@ -23,3 +23,5 @@ Version 1.0.5: Added a Windows executeable along with the Linux executeable of S
 Version 1.0.6: What the user types is seen as text and not html(this problem existed and the solution was to switch WHERE the text gets the element properties from shell to browser)
 #
 Version 1.0.7: Bug Fixes: if browser tab reloading, shell won't close, useless "afk" system from client to localhost commented out, situations made by worst test cases for PEC communication fixed, reload works smoothly(doesn't "keep you logged in")
+#
+Version 1.0.8: source code used instead of executables, and when the program is loaded, an attempt is made to AUTOMATICALLY navigate to 'localhost:8082'. If action is not possible, the program would ask you to MANUALLY navigate to 'localhost:8082' instead. This version would be the first publish as an npm package
