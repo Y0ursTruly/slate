@@ -9,6 +9,20 @@ var defaultLedger={
     "o36": ",36^(4),"
 }
 
+function randomise (theLetter, theNumber, theList) {
+let lenp = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ">", "<", "-", "_", "+", "=", "{", ":", "\\", "[", "]", "|", ".", "?", "/", "}", ";", " "];
+if (theLetter != undefined) {lenp.forEach((a,i)=>{if(a===theLetter){lenp.splice(i,1);}});}
+    var aToi = Math.random() * 10; aToi += 10; aToi = Math.floor(aToi);
+    if (theNumber != undefined) {aToi = theNumber;}
+    if (theList != undefined) {lenp = theList;}
+    var toReturn = "";
+    for (var i = 0; i < aToi; i++) {
+        var bToi = Math.random() * lenp.length; bToi = Math.floor(bToi);
+        toReturn += lenp[bToi];
+    }
+    return(toReturn);
+}
+
 function search (theItem, theList) {
     var ifTrue = false;
     for (var i = 0; i < theList.length; i++) {
