@@ -1,6 +1,6 @@
 {
   "name": "the-slate",
-  "version": "1.0.8",
+  "version": "1.0.81",
   "description": "What's said here is stored nowhere. User to User Communication is independent of the main-server. LIVE communication only, because of data not being stored. Once you Reload, it's a Clean Slate",
   "main": "none",
   "scripts": {
