@@ -1,5 +1,3 @@
-//I mean if you're here can you 'npm install the-slate'? It would be like an upvote or a like :D
-//I know this might seem like a rudimentary algorithm for scrambling(it probably is), but the logic(of the encryption) is sound and encrypting the same text with the same key can produce different results every time
 var defaultLedger={
     "leno": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ">", "<", "-", "_", "+", "=", "{", ":", "\\", "[", "]", "|", ",", ".", "?", "/", "'", "\"", "}", ";", " "],
     "lepo": ["1^(3)", "2^(3)", "3^(3)", "4^(3)", "5^(3)", "6^(3)", "7^(3)", "8^(3)", "9^(3)", "10^(3)", "1^(2)", "2^(2)", "3^(2)", "4^(2)", "5^(2)", "6^(2)", "7^(2)", "8^(2)", "9^(2)", "10^(2)", "11^(2)", "12^(2)", "13^(2)", "14^(2)", "15^(2)", "16^(2)", "17^(2)", "18^(2)", "19^(2)", "20^(2)", "21^(2)", "22^(2)", "23^(2)", "24^(2)", "25^(2)", "26^(2)", "1^(1)", "2^(1)", "3^(1)", "4^(1)", "5^(1)", "6^(1)", "7^(1)", "8^(1)", "9^(1)", "10^(1)", "11^(1)", "12^(1)", "13^(1)", "14^(1)", "15^(1)", "16^(1)", "17^(1)", "18^(1)", "19^(1)", "20^(1)", "21^(1)", "22^(1)", "23^(1)", "24^(1)", "25^(1)", "26^(1)", "1^(4)", "2^(4)", "3^(4)", "4^(4)", "5^(4)", "6^(4)", "7^(4)", "8^(4)", "9^(4)", "10^(4)", "11^(4)", "12^(4)", "13^(4)", "14^(4)", "15^(4)", "16^(4)", "17^(4)", "18^(4)", "19^(4)", "20^(4)", "21^(4)", "22^(4)", "23^(4)", "24^(4)", "25^(4)", "26^(4)", "27^(4)", "28^(4)", "29^(4)", "30^(4)", "31^(4)", "32^(4)", "33^(4)"],
@@ -76,13 +74,15 @@ function matrix (keyCol1, keyCol2, dataRow1, dataRow2) {
 
 
 
-function alphaEnc (nums, alphabet) {
+function alphaEnc (nums, alphabet, key) {
     var anAnswer = [];
     for (var nev = 0; nev < nums.length; nev++) {
+        var keyCount = key.reduce((a, b, i1)=>a + (key[i1-1]*2 +b-1))
         var o1 = 1; var o0 = 0; var myNum = nums[nev]; var toPut = []; var base = alphabet.length;
+        for(var i = 0; i <= nev%key.length; i++) {keyCount += key[i]} myNum *= keyCount
         while (myNum > 0) {
           var toNum = myNum % Math.pow(base, o1) / Math.pow(base, o0);
-          toPut.unshift(leno[toNum]);
+          toPut.unshift(alphabet[toNum]);
           myNum -= toNum * Math.pow(base, o0);
           o1++; o0++;
         }
@@ -190,7 +190,7 @@ for (var j = 3; j < key.length; j+=4) {
     }
     var lastly = abCryption.length; lastly -= 1; abCryption[lastly].pop();
     for (var nio = 0; nio < abCryption.length; nio++) {
-        thePlacer.push(alphaEnc(abCryption[nio], leno));
+        thePlacer.push(alphaEnc(abCryption[nio], leno, key));
     }
     
     let lepo = pKeyTEXT.lepo
@@ -234,10 +234,11 @@ if (data.length === 0 || key.length === 0) {return(null)}
 
 
 
-function alphaDec (data, alphabet) {
+function alphaDec (data, alphabet, key) {
     var answWerr = [];
     for (var to = 0; to < data.length; to++) {
         var toAdd = 0;
+        var toDivide = key.reduce((a, b, i1)=>a + (key[i1-1]*2 +b-1));
         var datum = data[to];
         var taa = 0;
         var topp = datum.length; 
@@ -247,6 +248,7 @@ function alphaDec (data, alphabet) {
             toAdd += (toAddto * Math.pow(alphabet.length, taa));
             taa += 1;
         }
+        for(var i = 0; i <= to%key.length; i++) {toDivide += key[i]} toAdd/=toDivide
         answWerr.push(toAdd);
     }
     return(answWerr);
@@ -346,7 +348,7 @@ for (var du = 0; du < key.length; du++) {
         }
     }
     for (var ii = 0; ii < data.length; ii++) {
-        data[ii] = alphaDec(data[ii], leno);
+        data[ii] = alphaDec(data[ii], leno, key);
         data[ii] = data[ii].join(",");
     }
     data = data.join(","+pKeyTEXT.Aletter+",");
