@@ -10,11 +10,13 @@ This is made for LIVE communication. This is because I (at least) do NOT store m
 After a reload, it's a Clean Slate
 
 ## To Note
-- This is the first version(officially) that uses source code instead of executables. It also will be the first version published as an npm package. For info on the update history, make sure to check out *[my update log](https://github.com/Y0ursTruly/slate/blob/master/UpdateLog.md)*
+- This version(1.0.9) hopefully would be the last update to the general method of how the client(this) and the server communicate.. this means that I can finally call this encryption method an `asynchronous` one
+- Yes it does sound cringey but I would like your feedback from anyone who uses it.. feel free to contact me at [paulrytaylor@gmail.com](mailto:paulrytaylor@gmail.com)
+- For info on the update history, make sure to check out *[my update log](https://github.com/Y0ursTruly/slate/blob/master/UpdateLog.md)*
 - I know I say it in the *[setup](#setup)* header but since this is source code, you would need *[node.js](https://nodejs.org/)*
 
 ## Setup
-- Make sure you have installed *[node.js](https://nodejs.org/)* since that's what the javascript file runs on
+- Make sure you have installed *[node.js](https://nodejs.org/)* since that's what the javascript files run on
 - Download *[github repository as ZIP](https://github.com/Y0ursTruly/slate/archive/refs/heads/master.zip)*, `github install https://github.com/Y0ursTruly/slate.git`, OR `npm install the-slate`
 
 ## Running
@@ -31,7 +33,7 @@ For The Private Encryption Configuration(PEC) option you would see in the your b
 ### Examples End
 The *Custom one* uses the **Private Encryption Configuration** and you will see the respective *(Custom Chat).json* file in the *JSON* folder
 <br>This third aspect of the Slate encryption uses a *"PEC config file", or "ledger"* which is basically a different *alphabet* that the encryption system would work with. The *().json* file is the default *ledger*(for communicating to mainserver)
-<br>Because of this ledger system, even if you have the password for a group, if you don't have their ledger, the information would still be scrambled like eggs to you
+<br>Because of this ledger system, even if you have the password for a group, if you don't have their ledger, the information would still be inaccessible to you
 #
 With the simple change of the 'alphabet' it uses and the encryption changes form drastically. So there can be literally several people in a room *that uses PEC*(the very same room), and if they each have different ledgers, they won't be able to read each others' messages
 ## Making a Group with PEC
