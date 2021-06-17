@@ -211,7 +211,7 @@ try{
       xhd.open('POST', msl, true);
       xhd.setRequestHeader("public",public);
       xhd.setRequestHeader("s", commEncrypt(keyCode, req.headers.s, ledger));
-      var sendData={p:commEncrypt(keyCode, req.headers.p, ledger), n:commEncrypt(keyCode, req.headers.n, ledger)};
+      var sendData={p:req.headers.p, n:req.headers.n};
       xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
       xhd.onload = function() {res.write(xhd.responseText); res.end();}
     }
