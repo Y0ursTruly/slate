@@ -25,3 +25,5 @@ Version 1.0.6: What the user types is seen as text and not html(this problem exi
 Version 1.0.7: Bug Fixes: if browser tab reloading, shell won't close, useless "afk" system from client to localhost commented out, situations made by worst test cases for PEC communication fixed, reload works smoothly(doesn't "keep you logged in")
 #
 Version 1.0.8: source code used instead of executables, and when the program is loaded, an attempt is made to AUTOMATICALLY navigate to 'localhost:8082'. If action is not possible, the program would ask you to MANUALLY navigate to 'localhost:8082' instead. This version would be the first publish as an npm package
+#
+Version 1.0.9: The server side accounts have been reset, the encryption method slightly tweaked(and now for communicating with server has a public and private key setup) which means that this encryption method is asynchronous >:D
