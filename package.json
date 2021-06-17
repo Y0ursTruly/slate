@@ -1,9 +1,11 @@
 {
   "name": "the-slate",
-  "version": "1.0.81",
+  "version": "1.0.9",
   "description": "What's said here is stored nowhere. User to User Communication is independent of the main-server. LIVE communication only, because of data not being stored. Once you Reload, it's a Clean Slate",
   "main": "none",
   "scripts": {
+    "run": "node slate.js",
+    "start": "node slate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,7 +28,10 @@
     "mesh-networks",
     "decentralized",
     "pec",
-    "decentralized-applications"
+    "decentralized-applications",
+    "encryption",
+    "asynchronous",
+    "asynchronous-encryption"
   ],
   "author": "Paul R. Y. Taylor",
   "license": "Apache-2.0",
