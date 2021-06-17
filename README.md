@@ -1,4 +1,4 @@
-# Slate(update incoming)
+# Slate
 What's said here is stored nowhere
 #
 This Communication Build has user to user communication main-server INDEPENDENT (your user to user messages wont even reach my main-server)
