@@ -2,7 +2,10 @@
 //this is what would run in localhost:8082
 //................................................................................................................................
 var gggg; //this is for the interval that asks your local listener for messages it recieved
+if(!localStorage.opened){localStorage.opened="yes"}
+else{while(true){ alert("Slate is ALREADY opened in another browser.. please close this one 0_0");window.close() }}
 window.onbeforeunload = function(){
+    delete(localStorage.opened)
     var xhd = new XMLHttpRequest();
     xhd.open('POST', window.location.href, true);
     xhd.setRequestHeader("off", "yes");
@@ -25,12 +28,14 @@ let pec=()=>{var toSend = prompt('Enter Chat Room Name(that you want PEC file fo
 function getMessages () {
 //interval
 //var aio = 0;
+  var unReadable='<i style="color:yellow">THIS USER MODIFIED THEIR Slate CLIENT TO SEND A MESSAGE IN A FORMAT THE STANDARD Slate CLIENT DOES NOT READ >:{</i></b>'
+  var unReadable1='<i style="color:red">YOU MODIFIED YOUR Slate CLIENT TO SEND A MESSAGE IN A FORMAT THE STANDARD Slate CLIENT DOES NOT READ >:{</i></b>'
   function prepareElem(text){
     var i=text.indexOf("</b>")+4
     var text0=text.substr(0,i)
     var text1=text.substr(i)
     var toReturn=document.createElement('div')
-    if(i==3){toReturn.innerHTML='<b><i style="color:yellow">MESSAGE WITH DIFFERENT ENCRYPTION LEDGER</i></b>'; return toReturn}
+    if(i==3){toReturn.innerHTML=unReadable; return toReturn}
     toReturn.innerHTML=text0
     var textVar=document.createElement('span')
     textVar.innerText=text1
@@ -44,7 +49,7 @@ function getMessages () {
   }
   function you(text){
     toReturn=prepareElem(text)
-    if(toReturn.innerHTML=='<b><i style="color:yellow">MESSAGE WITH DIFFERENT ENCRYPTION LEDGER</i></b>'){toReturn.innerHTML="<b><i style='color:red'>MESSAGE WITH DIFFERENT ENCRYPTION LEDGER<br>Please Ensure you have a proper LEDGER for THIS chat room</i></b>"}
+    if(toReturn.innerHTML==unReadable){toReturn.innerHTML=unReadable1}
     toReturn.style='width: 500px; height: 70px; background-color: lightgreen; margin: 5px; margin-left: 200px;'
     return(toReturn)
   }
@@ -57,7 +62,7 @@ function getMessages () {
     xhd.open('POST', window.location.href, true); ///should be localhost when separate user systems are in place
     xhd.setRequestHeader("s", "either");
     //xhd.setRequestHeader("num", aio.toString());
-    xhd.send(); var abcde = setTimeout(()=>{if(xhd.status === 0){alert("Batch/Shell operation on your device isn't running anymore. Application Restart Required Before Browser Tab can Run again");window.close()}}, 500);
+    xhd.send(); var abcde = setTimeout(()=>{if(xhd.status === 0){alert("Batch/Shell operation on your device isn't running anymore. Please CLOSE this page");window.close()}}, 500);
     xhd.onload = function() {
         if (xhd.responseText != "") {
             if(xhd.getResponseHeader("oi") === "yes"){if(xhd.responseText.length>2){document.getElementById("myInput").value="";parse(xhd.responseText).forEach(a=>{document.getElementById("toChange").appendChild(a)})}}
@@ -82,13 +87,6 @@ function logStruct(key, Uname) {
             loginScreen(Uname);
             myUname = Uname;
         }
-        else if (xl === "Invalid") {
-            document.getElementById("info").innerHTML = "You Attempted to Log In with Incorrect Username and/or Password";
-        }
-        else if (xl === "Incorrect") {
-            document.getElementById("info").innerHTML = "You Attempted to Log In with Incorrect Username and/or Password";
-        }
-        else if (xl === "Already") {document.getElementById("info").innerHTML = "This Account is already Logged In Once";}
         else {document.getElementById("info").innerHTML = xl;}
     }
 }
@@ -179,17 +177,3 @@ function sendMessage (theMessage) {
 <button onclick="signStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Sign Up</kbd></button>
 </br>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
