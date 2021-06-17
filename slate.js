@@ -38,8 +38,7 @@ try{
   }
   
   //ngrok for port tunnelling 
-  //try{myAddr = await ngrok.connect(8082);}
-  try{myAddr = await ngrok.connect({authtoken: "1YdUnfVDZugXYijco5fQcOAtCy0_5BT1htXvUVKmApuWydeiR", addr: 8082});}
+  try{myAddr = await ngrok.connect(8082);}
   catch(err){console.error("Failed setting up required ngrok tunnel.. reason being\n~",err); process.exit(0)}
   
   //now to try to open browser with localhost:8082
@@ -130,11 +129,12 @@ function search (theItem, theList) {
 }
 
 function _logout (res) {
-  var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("public",public); xhd.setRequestHeader("s", commEncrypt(keyCode, "logout", ledger)); xhd.setRequestHeader("n", commEncrypt(keyCode, theName, ledger)); xhd.setRequestHeader("p", commEncrypt(keyCode, theKey, ledger)); xhd.send();
-  xhd.onload = function () {isLogged = false; res.write(xhd.responseText); clearInterval(toAll.toInterval); /*clearTimeout(toAll.toTimeout);*/ res.end();} //even if incorrect data is entered here, because of afk rules on the mainserver, you would still logout
+  var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("public",public); xhd.setRequestHeader("s", commEncrypt(keyCode, "logout", ledger));
+  var sendData={n:theName, p:theKey}; xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
+  xhd.onload = function () {isLogged = false; res.write(xhd.responseText); clearInterval(toAll.toInterval); res.end();}
+  //even if incorrect data is entered here, because of afk rules on the mainserver, you would still logout
 }
-function startInterval () {toAll.toInterval = setInterval(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(keyCode, "killT", ledger)); xhd.setRequestHeader("public",public); xhd.setRequestHeader("p", commEncrypt(keyCode, theKey, ledger)); xhd.setRequestHeader("n", commEncrypt(keyCode, theName, ledger)); xhd.send();}, 3000);}
-//function startTimeout () {toAll.toTimeout = setTimeout(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("public",public); xhd.setRequestHeader("s", commEncrypt(keyCode, "logout", ledger)); xhd.setRequestHeader("p", commEncrypt(keyCode, theKey, ledger)); xhd.setRequestHeader("n", commEncrypt(keyCode, theName, ledger)); xhd.send(); clearInterval(toAll.toInterval); oi="no"}, 5000);} ///logout if localhost stops asking for text(action stopped since it creates useless flaws)
+function startInterval () {toAll.toInterval = setInterval(()=>{var xhd = new XMLHttpRequest(); xhd.open('POST', msl, true); xhd.setRequestHeader("s", commEncrypt(keyCode, "killT", ledger)); xhd.setRequestHeader("public",public); var sendData={p:theKey, n:theName}; xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));}, 3000);}
 
 function randomWarning () {
 let lenp = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "~", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ">", "<", "-", "_", "+", "=", "{", ":", "\\", "[", "]", "|", ",", ".", "?", "/", "}", ";", " "];
@@ -163,10 +163,10 @@ try{
         datum += chunk;
       }); req.on('end', () => {datum = commDecrypt(keyCode, datum, ledger); theList = datum.split(","); res.end();});
     }
-    else if (commDecrypt(theCode, req.headers.s, pKeyy) === "aMessage" && req.headers.pi != undefined && commDecrypt(theCode, req.headers.pi, pKeyy) != "") { var datum = ""; //a message from a user
+    else if (commDecrypt(theCode, req.headers.s, pKeyy) === "aMessage") { var datum = ""; //a message from a user
       req.on('data', chunk => {
         datum += chunk;
-      }); req.on('end', () => {theChat.push(datum); pii.push(commDecrypt(theCode, req.headers.pi, pKeyy)); res.end();});
+      }); req.on('end', () => {datum=JSON.parse(commDecrypt(theCode, datum, pKeyy)); theChat.push(datum.text); pii.push(datum.pi); res.end();});
     }
     else if(req.headers.host !== "localhost:8082"){ //everything else(below) must be from localhost:8082
       res.write("For Security Reasons, you must access your local slate app at 'localhost:8082'"); res.end();
@@ -177,8 +177,8 @@ try{
           var xhd = new XMLHttpRequest();
           xhd.open('POST', a, true);
           xhd.setRequestHeader("s", commEncrypt(theCode, "aMessage", pKeyy));
-          xhd.setRequestHeader("pi", commEncrypt(theCode, theName, pKeyy));
-          xhd.send(commEncrypt(theCode, '<b id="'+randomWarning()+'">'+theName+': </b>'+req.headers.m, pKeyy));
+          var sendData={text:'<b id="'+randomWarning()+'">'+theName+': </b>'+req.headers.m, pi:theName};
+          xhd.send(commEncrypt(theCode, JSON.stringify(sendData), pKeyy));
         });
       }
       res.end();
@@ -189,7 +189,7 @@ try{
         instaText[i]={};
         if (pii[i] === theName) {instaText[i].you=true}
         else {instaText[i].you=false}
-        instaText[i].text=commDecrypt(theCode, theChat[i], pKeyy);
+        instaText[i].text=theChat[i];
       }
       res.write(JSON.stringify(instaText)); theChat = []; pii = [];
       pKey = ""; res.end();
@@ -200,10 +200,8 @@ try{
         xhd.open('POST', msl, true);
         xhd.setRequestHeader("public",public);
         xhd.setRequestHeader("s", commEncrypt(keyCode, req.headers.s, ledger));
-        xhd.setRequestHeader("p", commEncrypt(keyCode, req.headers.p, ledger));
-        xhd.setRequestHeader("n", commEncrypt(keyCode, req.headers.n, ledger));
-        xhd.setRequestHeader("ip", commEncrypt(keyCode, myAddr, ledger));
-        xhd.send();
+        var sendData={p:req.headers.p, n:req.headers.n, ip:myAddr};
+        xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
         xhd.onload = function() {if (xhd.responseText === req.headers.n) {isLogged = true; theName = req.headers.n; theKey = req.headers.p; startInterval();} res.write(xhd.responseText); res.end();}
       }//FIND IP
       else{res.end("Your Device's host is already logged in to an account. CANNOT Login TWICE");} //checking of simultaneous login on one device also checked by main-server BTW :)
@@ -213,47 +211,38 @@ try{
       xhd.open('POST', msl, true);
       xhd.setRequestHeader("public",public);
       xhd.setRequestHeader("s", commEncrypt(keyCode, req.headers.s, ledger));
-      xhd.setRequestHeader("p", commEncrypt(keyCode, req.headers.p, ledger));
-      xhd.setRequestHeader("n", commEncrypt(keyCode, req.headers.n, ledger));
-      xhd.send();
+      var sendData={p:commEncrypt(keyCode, req.headers.p, ledger), n:commEncrypt(keyCode, req.headers.n, ledger)};
+      xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
       xhd.onload = function() {res.write(xhd.responseText); res.end();}
     }
     else if (req.headers.s === "logout") {_logout(res)} //logout is a function
     else if (req.headers.s === "createRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined) {
-      var zz = req.headers.z;
+      var zz = req.headers.z=="yes"?"yes":"no"
       var xhd = new XMLHttpRequest();
       xhd.open('POST', msl, true);
       xhd.setRequestHeader("public",public);
       xhd.setRequestHeader("s", commEncrypt(keyCode, "createRoom", ledger));
-      xhd.setRequestHeader("n", commEncrypt(keyCode, theName, ledger));
-      xhd.setRequestHeader("p", commEncrypt(keyCode, theKey, ledger));
-      xhd.setRequestHeader("m", commEncrypt(keyCode, req.headers.n, ledger));
-      xhd.setRequestHeader("q", commEncrypt(keyCode, req.headers.p, ledger));
-      if(zz!="yes"){zz="no"} xhd.setRequestHeader("z", commEncrypt(keyCode, zz, ledger));
-      xhd.send();
+      var sendData={n:theName, p:theKey, m:req.headers.n, q:req.headers.p, z:zz};
+      xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
       xhd.onload = function () {res.write(xhd.responseText); res.end();}
     }
     else if (req.headers.s === "joinRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined) {
-      var zz = req.headers.z;
+      var zz = req.headers.z=="yes"?"yes":"no"
       var xhd = new XMLHttpRequest();
       xhd.open('POST', msl, true);
       xhd.setRequestHeader("public",public);
       xhd.setRequestHeader("s", commEncrypt(keyCode, "joinRoom", ledger));
-      xhd.setRequestHeader("n", commEncrypt(keyCode, theName, ledger));
-      xhd.setRequestHeader("p", commEncrypt(keyCode, theKey, ledger));
-      xhd.setRequestHeader("m", commEncrypt(keyCode, req.headers.n, ledger));
-      xhd.setRequestHeader("q", commEncrypt(keyCode, req.headers.p, ledger));
-      if(zz!="yes"){zz="no"} xhd.setRequestHeader("z", commEncrypt(keyCode, zz, ledger));
-      xhd.send();
+      var sendData={n:theName, p:theKey, m:req.headers.n, q:req.headers.p, z:zz};
+      xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
       xhd.onload = function () {if (xhd.responseText === "Success") {if (zz === "yes") {pKeyy = req.headers.n;} else {pKeyy = "";} theCode = req.headers.p;} res.write(xhd.responseText); res.end();}
     }
     else if (req.headers.s === "makeJSON") {
       var obj=makeLedger(); var mm = req.headers.m; if (req.headers.m === undefined || req.headers.m === "") {mm = "not named_"+randomise();} fs.writeFile(__dirname + '/JSON/('+mm+').json', JSON.stringify(obj), (err) => {if (err) throw err;});
       res.write("Successfully Created Config File"); res.end();
     }
-    else if(req.headers.off=="yes"&&req.headers.host === "localhost:8082"){
+    else if(req.headers.off=="yes"&&req.headers.host === "localhost:8082"){ //program ends when browser connection is closed(CLOSED not RELOADED)
       _logout(res);toAll.closed=true;setTimeout(()=>{if(!toAll.closed){return;}console.log('browser session ended');process.exit(0);},500)
-    } //program ends when browser connection is closed(CLOSED not RELOADED)
+    }
     else {
       res.write("Invalid Request Parameters. This version of Slate is probably outdated ;-;"); res.end();
     }
