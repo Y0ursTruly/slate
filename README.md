@@ -17,7 +17,7 @@ After a reload, it's a Clean Slate
 
 ## Setup
 - Make sure you have installed *[node.js](https://nodejs.org/)* since that's what the javascript files run on
-- Download *[github repository as ZIP](https://github.com/Y0ursTruly/slate/archive/refs/heads/master.zip)*, `github clone --depth=1 https://github.com/Y0ursTruly/slate.git`, OR `npm install the-slate`
+- Download *[github repository as ZIP](https://github.com/Y0ursTruly/slate/archive/refs/heads/master.zip)*, `git clone --depth=1 https://github.com/Y0ursTruly/slate.git`, OR `npm install the-slate`
 
 ## Running
 For any method of installation, running this has the same concept, `node path/to/slate.js`
