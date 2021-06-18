@@ -42,17 +42,17 @@ try{
   catch(err){console.error("Failed setting up required ngrok tunnel.. reason being\n~",err); process.exit(0)}
   
   //now to try to open browser with localhost:8082
-  let stderr=null; let stdout=null
+  let stderr=null; let stdout=null; setupComplete=true
+  //in one case the shellCommand function was hanging so no more await
   if(process.platform=="win32"){
-    let x = await shellCommand("start http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
+    let x = shellCommand("start http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
   }
   else if(process.platform=="darwin"){
-    let x = await shellCommand("open http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
+    let x = shellCommand("open http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
   }
   else{
-    let x = await shellCommand("xdg-open http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
+    let x = shellCommand("xdg-open http://localhost:8082"); stdout=x.stdout; stderr=x.stderr //waiting on this hangs until browser closed
   }
-  setupComplete=true
   
   //if it isn't possible, ask the user to open a browser to localhost:8082
   if(stderr){
