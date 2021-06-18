@@ -27,7 +27,7 @@ For The Private Encryption Configuration(PEC) option you would see in the your b
 <br>There are some examples (1 *Custom* and 1 *Normal*) groups you can try: **My Chat**(*Normal one*) and **Custom Chat**(*Custom one*)
 ### Examples Begin
 - For **My Chat**, make sure the **PEC** option is set to ***no***(it is like this as default) and the password is ***asdf***
-- For **Custom Chat**, make sure the **PEC** option is set to ***yes*** and the password is ***don't enter***
+- For **Custom Chat**, make sure the **PEC** option is set to ***yes*** and the password is ***don'tenter***
 <br>The PEC config file(*I also call it a ledger*) comes with this repository
 <br>*However you can experiment using 2 machines with different ledgers(different config files for PEC), then instead of a message and you will see the system text basically saying that it can't decrypt received message*
 ### Examples End
