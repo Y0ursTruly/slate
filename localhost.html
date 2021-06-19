@@ -3,10 +3,12 @@
 //................................................................................................................................
 var gggg; //this is for the interval that asks your local listener for messages it recieved
 var n=\\ //the server puts a proper number there by that double backslash(a count of how many times localhost.html was called)
-if(n===0){delete(localStorage.opened)} localStorage[n]="yes"
 function endlessLoop(){while(true){ alert("Slate is ALREADY opened in another browser\nPlease close this one 0_0");window.close() }}
+if(n===0){for(let item in localStorage){delete(localStorage[item])}}
+var recordTime=new Date().getTime().toString() //value for localStorage[n] although I think it could be arbitrary
 for(let key in localStorage){ if(parseInt(key)<n){endlessLoop()} }
-if(!localStorage.opened){localStorage.opened="yes"} else{endlessLoop()}
+if(localStorage[n]){endlessLoop()} localStorage[n]=recordTime
+if(localStorage.opened){endlessLoop()} localStorage.opened="yes"
 window.onbeforeunload = function(){
     delete(localStorage.opened); delete(localStorage[n]);
     var xhd = new XMLHttpRequest();
