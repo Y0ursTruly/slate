@@ -1,7 +1,6 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
-var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var siter = fs.readFileSync(__dirname + '/localhost.html');
 var theChat = []; var theList = []; var toAll = {};
 var myLocalIp = ""; var myIP = ""; toAll.closed=true;
@@ -10,13 +9,35 @@ var msl = fs.readFileSync(__dirname + '/mainserverlocation.txt').toString();
 var myAddr = ""; var pKeyy = ""; var pKey = ""; var setupComplete=false
 var oi = "yes"; var isLogged = false; var pii = []
 let {encrypt,decrypt,makeLedger} = require('./encryption.js');
-let shellCommand=(require('util')).promisify((require('child_process')).exec)
+let child=require('child_process'); let {spawn}=child
+let shellCommand=(require('util')).promisify(child.exec)
+let specialText=(text)=>'\x1b[1m\x1b[33m'+text+'\x1b[0m'
 var keysJSON=require('./JSON/keys.json')
 var keyCode=null; var ledger=null; var public=null
 
-const ngrok = require('ngrok');
+async function exec(command){
+  return await new Promise(resolve=>{
+    let options={stdio: 'inherit',env:process.env,cwd:undefined,shell:true}
+    let myChild=spawn(command,['build'],options)
+    myChild.on('close',resolve)
+  })
+}
+
+var XMLHttpRequest, ngrok
 (async function() {
 try{
+  try{
+    XMLHttpRequest=require("xmlhttprequest")
+    XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
+    ngrok=require('ngrok')
+  }
+  catch{
+    console.log(specialText("\n\nInstalling Dependencies..."))
+    await exec(`cd ${JSON.stringify(process.argv[1])};npm install xmlhttprequest@1.8.0;npm install ngrok@3.3.0`)
+    XMLHttpRequest=require("xmlhttprequest")
+    XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
+    ngrok=require('ngrok')
+  }
   if(!keysJSON[msl]){await new Promise(r=>{
     var xhd=new XMLHttpRequest()
     xhd.open('POST',msl,true)
@@ -43,6 +64,7 @@ try{
   
   //now to try to open browser with localhost:8082
   let stderr=null; let stdout=null; setupComplete=true
+  console.log(specialText("Launching..."))
   //in one case the shellCommand function was hanging so no more await
   if(process.platform=="win32"){
     let x = shellCommand("start http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
@@ -56,10 +78,10 @@ try{
   
   //if it isn't possible, ask the user to open a browser to localhost:8082
   if(stderr){
-    console.log("automatic open failed, so please open a browser tab and go to 'localhost:8082' to connect");
+    console.log(specialText("automatic open failed, so please open a browser tab and go to 'localhost:8082' to connect"));
   }
 }
-catch(err){console.error("Slate setup-before-launch failed.. reason being:\n~",err); process.exit(0)}
+catch(err){console.error(specialText("Slate setup-before-launch failed.. reason being:\n~"),err,specialText("\nDo you have nodejs properly installed?")); process.exit(0)}
 })();
 
 
