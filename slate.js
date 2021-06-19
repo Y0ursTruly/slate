@@ -10,19 +10,10 @@ var msl = fs.readFileSync(__dirname + '/mainserverlocation.txt').toString();
 var myAddr = ""; var pKeyy = ""; var pKey = ""; var setupComplete=false
 var oi = "yes"; var isLogged = false; var pii = []; var timesOpened=0;
 let {encrypt,decrypt,makeLedger} = require('./encryption.js');
-let child=require('child_process'); let {spawn}=child
-let shellCommand=(require('util')).promisify(child.exec)
+let shellCommand=(require('util')).promisify((require('child_process')).exec)
 let specialText=(text)=>'\x1b[1m\x1b[33m'+text+'\x1b[0m'
 var keysJSON=require('./JSON/keys.json')
 var keyCode=null; var ledger=null; var public=null
-
-async function exec(command){
-  return await new Promise(resolve=>{
-    let options={stdio: 'inherit',env:process.env,cwd:undefined,shell:true}
-    let myChild=spawn(command,['build'],options)
-    myChild.on('close',resolve)
-  })
-}
 
 var XMLHttpRequest, ngrok
 (async function() {
@@ -36,7 +27,7 @@ try{
     console.log(specialText("\n\nInstalling Dependencies..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
     directory=directory.substr(0, directory.length-9)
-    await exec(`cd "${directory}";npm install xmlhttprequest@1.8.0;npm install ngrok@4.0.1`)
+    await shellCommand(`cd "${directory}";npm update`)
     XMLHttpRequest=require("xmlhttprequest")
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
