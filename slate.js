@@ -1,13 +1,14 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
-var siter = fs.readFileSync(__dirname + '/localhost.html');
+var site = fs.readFileSync(__dirname + '/localhost.html').toString();
+var siter = () => site.split('\\\\').join(timesOpened);
 var theChat = []; var theList = []; var toAll = {};
 var myLocalIp = ""; var myIP = ""; toAll.closed=true;
 var theName = ""; var theKey = ""; var theCode = "";
 var msl = fs.readFileSync(__dirname + '/mainserverlocation.txt').toString();
 var myAddr = ""; var pKeyy = ""; var pKey = ""; var setupComplete=false
-var oi = "yes"; var isLogged = false; var pii = []
+var oi = "yes"; var isLogged = false; var pii = []; var timesOpened=0;
 let {encrypt,decrypt,makeLedger} = require('./encryption.js');
 let child=require('child_process'); let {spawn}=child
 let shellCommand=(require('util')).promisify(child.exec)
@@ -33,7 +34,8 @@ try{
   }
   catch{
     console.log(specialText("\n\nInstalling Dependencies..."))
-    await exec(`cd ${JSON.stringify(process.argv[1])};npm install xmlhttprequest@1.8.0;npm install ngrok@3.3.0`)
+    let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
+    await exec(`cd "${directory}";npm install xmlhttprequest@1.8.0;npm install ngrok@4.0.1`)
     XMLHttpRequest=require("xmlhttprequest")
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
@@ -178,7 +180,7 @@ let lenp = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D"
 var x = http.createServer(function (req, res) {
 if(!setupComplete){return res.end("WHY are you here already, I'm not finished setting up :/")}
 try{
-  if (req.method === "GET") {  delete(toAll.closed); res.write(siter); res.end();  }
+  if (req.method === "GET") {  delete(toAll.closed); res.write(siter()); timesOpened++; res.end();  }
   else if (req.method === "POST") {
     if (commDecrypt(keyCode, req.headers.s, ledger) === "ipList") { var datum = ""; //list of users to talk to
       req.on('data', chunk => {
