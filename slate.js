@@ -35,6 +35,7 @@ try{
   catch{
     console.log(specialText("\n\nInstalling Dependencies..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
+    directory=directory.substr(directory.length-9, directory.length)
     await exec(`cd "${directory}";npm install xmlhttprequest@1.8.0;npm install ngrok@4.0.1`)
     XMLHttpRequest=require("xmlhttprequest")
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
