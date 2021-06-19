@@ -2,12 +2,13 @@
 //this is what would run in localhost:8082
 //................................................................................................................................
 var gggg; //this is for the interval that asks your local listener for messages it recieved
-if(\\===0){delete(localStorage.opened)} //the server puts a proper number there by that double backslash
-//above if statement so that localStorage.opened gets deleted on FIRST time server shares this file
-if(!localStorage.opened){localStorage.opened="yes"}
-else{while(true){ alert("Slate is ALREADY opened in another browser.. please close this one 0_0");window.close() }}
+var n=\\ //the server puts a proper number there by that double backslash(a count of how many times localhost.html was called)
+if(n===0){delete(localStorage.opened)} localStorage[n]="yes"
+function endlessLoop(){while(true){ alert("Slate is ALREADY opened in another browser\nPlease close this one 0_0");window.close() }}
+for(let key in localStorage){ if(parseInt(key)<n){endlessLoop()} }
+if(!localStorage.opened){localStorage.opened="yes"} else{endlessLoop()}
 window.onbeforeunload = function(){
-    delete(localStorage.opened)
+    delete(localStorage.opened); delete(localStorage[n]);
     var xhd = new XMLHttpRequest();
     xhd.open('POST', window.location.href, true);
     xhd.setRequestHeader("off", "yes");
