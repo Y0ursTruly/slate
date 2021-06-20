@@ -16,7 +16,7 @@ let specialText=(text)=>'\x1b[1m\x1b[33m'+text+'\x1b[0m'
 var keysJSON=require('./JSON/keys.json')
 var keyCode=null; var ledger=null; var public=null
 
-async function exec(command){
+async function showShell(command){
   return await new Promise(resolve=>{
     let options={stdio:'inherit',env:process.env,cwd:undefined,shell:true}
     let myChild=spawn(command,options)
@@ -36,7 +36,7 @@ try{
     console.log(specialText("\n\nInstalling Dependencies..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
     directory=directory.substr(0, directory.length-9)
-    await exec(`cd "${directory}";npm update`)
+    await showShell(`cd "${directory}";npm update`)
     XMLHttpRequest=require("xmlhttprequest")
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
