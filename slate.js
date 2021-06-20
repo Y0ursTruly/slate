@@ -10,10 +10,19 @@ var msl = fs.readFileSync(__dirname + '/mainserverlocation.txt').toString();
 var myAddr = ""; var pKeyy = ""; var pKey = ""; var setupComplete=false
 var oi = "yes"; var isLogged = false; var pii = []; var timesOpened=0;
 let {encrypt,decrypt,makeLedger} = require('./encryption.js');
-let shellCommand=(require('util')).promisify((require('child_process')).exec)
+let {exec,spawn}=require('child_process')
+let shellCommand=(require('util')).promisify(exec)
 let specialText=(text)=>'\x1b[1m\x1b[33m'+text+'\x1b[0m'
 var keysJSON=require('./JSON/keys.json')
 var keyCode=null; var ledger=null; var public=null
+
+async function exec(command){
+  return await new Promise(resolve=>{
+    let options={stdio:'inherit',env:process.env,cwd:undefined,shell:true}
+    let myChild=spawn(command,options)
+    myChild.on('close',resolve)
+  })
+}
 
 var XMLHttpRequest, ngrok
 (async function() {
@@ -24,10 +33,10 @@ try{
     ngrok=require('ngrok')
   }
   catch{
-    console.log(specialText("\n\nInstalling Dependencies(~1 minute)..."))
+    console.log(specialText("\n\nInstalling Dependencies..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
     directory=directory.substr(0, directory.length-9)
-    await shellCommand(`cd "${directory}";npm update`)
+    await exec(`cd "${directory}";npm update`)
     XMLHttpRequest=require("xmlhttprequest")
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
@@ -58,7 +67,7 @@ try{
   
   //now to try to open browser with localhost:8082
   let stderr=null; let stdout=null; setupComplete=true
-  console.log(specialText("Launching(~5 seconds)..."))
+  console.log(specialText("Launching..."))
   //in one case the shellCommand function was hanging so no more await
   if(process.platform=="win32"){
     let x = shellCommand("start http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
