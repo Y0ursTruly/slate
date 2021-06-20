@@ -7,7 +7,7 @@ var theChat = []; var theList = []; var toAll = {};
 var myLocalIp = ""; var myIP = ""; toAll.closed=true;
 var theName = ""; var theKey = ""; var theCode = "";
 var msl = fs.readFileSync(__dirname + '/mainserverlocation.txt').toString();
-var myAddr = ""; var pKeyy = ""; var pKey = ""; var setupComplete=false
+var myAddr = ""; var pKeyy = ""; var pKey = ""; var setupComplete=false;
 var oi = "yes"; var isLogged = false; var pii = []; var timesOpened=0;
 let {encrypt,decrypt,makeLedger} = require('./encryption.js');
 let {exec,spawn}=require('child_process')
@@ -33,7 +33,7 @@ try{
     ngrok=require('ngrok')
   }
   catch{
-    console.log(specialText("\n\nInstalling Dependencies..."))
+    console.log(specialText("Installing Dependencies..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
     directory=directory.substr(0, directory.length-9)
     await showShell(`cd "${directory}";npm update`)
@@ -42,6 +42,7 @@ try{
     ngrok=require('ngrok')
   }
   if(!keysJSON[msl]){await new Promise(r=>{
+    console.log(specialText("Obtaining first-time Keys..."))
     var xhd=new XMLHttpRequest()
     xhd.open('POST',msl,true)
     xhd.setRequestHeader("keys","yes")
