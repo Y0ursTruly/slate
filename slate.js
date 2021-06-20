@@ -24,7 +24,7 @@ try{
     ngrok=require('ngrok')
   }
   catch{
-    console.log(specialText("\n\nInstalling Dependencies..."))
+    console.log(specialText("\n\nInstalling Dependencies(~1 minute)..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
     directory=directory.substr(0, directory.length-9)
     await shellCommand(`cd "${directory}";npm update`)
@@ -58,7 +58,7 @@ try{
   
   //now to try to open browser with localhost:8082
   let stderr=null; let stdout=null; setupComplete=true
-  console.log(specialText("Launching..."))
+  console.log(specialText("Launching(~5 seconds)..."))
   //in one case the shellCommand function was hanging so no more await
   if(process.platform=="win32"){
     let x = shellCommand("start http://localhost:8082"); stdout=x.stdout; stderr=x.stderr
