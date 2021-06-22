@@ -96,7 +96,7 @@ function logStruct(key, Uname) {
 //................;;
 function loginScreen (user) {
 var welcome = ("Welcome, " + user);
-var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">` + welcome + `</div><button onclick="logOut();">Logout</button></kbd><br><br /><input id="sName" placeholder="Room Name"><input id="sKey" placeholder="Room Password" type="Password"><button onclick="createRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Create Room</button><button onclick="joinRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Join Room</button>
+var theText = `<kbd><div id="info" style="min-height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">` + welcome + `</div><button onclick="logOut();">Logout</button></kbd><br><br /><input id="sName" placeholder="Room Name"><input id="sKey" placeholder="Room Password" type="Password"><button onclick="createRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Create Room</button><button onclick="joinRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Join Room</button>
 <span style="color: lightgreen; background-color: teal" title="PEC, or Private Encryption Configuration" innerText="no" id="z">With PEC?</span><select id="za" innerTEXT="no" name="PEC">
     <option id="dc1" >no</option>
     <option id="dc2" >yes</option>
@@ -107,7 +107,7 @@ document.getElementById("toChange").innerHTML = theText; getMessages();
 
 function loginScreenn (user) {
 var welcome = ("Welcome to Room '" + user + "'");
-var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">` + welcome + `</div><button onclick="logOut();">Logout</button></kbd><br><input id="myInput" title="say something" placeholder="say something"><button onclick="sendMessage(document.getElementById('myInput').value);">Send Message</button><br /><input id="sName" placeholder="Room Name"><input id="sKey" placeholder="Room Password" type="Password"><button onclick="createRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Create Room</button><button onclick="joinRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Join Room</button>
+var theText = `<kbd><div id="info" style="min-height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">` + welcome + `</div><button onclick="logOut();">Logout</button></kbd><br><input id="myInput" title="say something" placeholder="say something"><button onclick="sendMessage(document.getElementById('myInput').value);">Send Message</button><br /><input id="sName" placeholder="Room Name"><input id="sKey" placeholder="Room Password" type="Password"><button onclick="createRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Create Room</button><button onclick="joinRoom(document.getElementById('sName').value, document.getElementById('sKey').value);">Join Room</button>
 <span style="color: lightgreen; background-color: teal" title="PEC, or Private Encryption Configuration" innerText="no" id="z">With PEC?</span><select id="za" innerTEXT="no" name="PEC">
     <option id="dc1" >no</option>
     <option id="dc2" >yes</option>
@@ -117,7 +117,7 @@ document.getElementById("toChange").innerHTML = theText;
 }
 //................;;
 function logoutScreen () {
-var theText = `<kbd><div id="info" style="height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">ENTRY PAGE</div></kbd><br><input id="keys" style="align: left;" title="Username" placeholder="Username"></br><br><input id="logs" style="align: left;" title="Password" type="Password" placeholder="Password"></br><br><button onclick="logStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Login</kbd></button><button onclick="signStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Sign Up</kbd></button></br>`;
+var theText = `<kbd><div id="info" style="min-height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">ENTRY PAGE</div></kbd><br><input id="keys" style="align: left;" title="Username" placeholder="Username"></br><br><input id="logs" style="align: left;" title="Password" type="Password" placeholder="Password"></br><br><button onclick="logStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Login</kbd></button><button onclick="signStruct(document.getElementById('logs').value, document.getElementById('keys').value);"><kbd>Sign Up</kbd></button></br>`;
 document.getElementById("toChange").innerHTML = theText;
 }
 
@@ -171,7 +171,7 @@ function sendMessage (theMessage) {
 <link rel="shortcut icon" href="https://cdn.pixabay.com/photo/2014/04/03/10/52/circle-311551_960_720.png" type="image/x-icon"/>
 <title>Slate</title>
 <body id = "toChange">
-<kbd><div id="info" style="position: right; height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">ENTRY PAGE</div></kbd>
+<kbd><div id="info" style="position: right; min-height: 30px; width: 200px; padding: 20px; color: red; background-color: blue;">ENTRY PAGE</div></kbd>
 <br><input id="keys" style="align: left;" title="Username" placeholder="Username"></br>
 <br><input id="logs" style="align: left;" title="Password" type="Password" placeholder="Password"></br>
 <br>
