@@ -41,18 +41,19 @@ function getMessages () {
     toReturn.innerHTML=text0
     var textVar=document.createElement('span')
     textVar.innerText=text1
+    textVar.style='display: block; max-width: 500px; word-wrap: break-word;'
     toReturn.appendChild(textVar)
     return toReturn
   }
   function notYou(text){
     toReturn=prepareElem(text)
-    toReturn.style='width: 500px; height: 70px; background-color: red; margin: 5px;'
+    toReturn.style='width: 500px; min-height: 70px; background-color: red; margin: 5px;'
     return(toReturn)
   }
   function you(text){
     toReturn=prepareElem(text)
     if(toReturn.innerHTML==unReadable){toReturn.innerHTML=unReadable1}
-    toReturn.style='width: 500px; height: 70px; background-color: lightgreen; margin: 5px; margin-left: 200px;'
+    toReturn.style='width: 500px; min-height: 70px; background-color: lightgreen; margin: 5px; margin-left: 200px;'
     return(toReturn)
   }
   function parse(resp){
@@ -68,7 +69,6 @@ function getMessages () {
     xhd.onload = function() {
         if (xhd.responseText != "") {
             if(xhd.getResponseHeader("oi") === "yes"){if(xhd.responseText.length>2){document.getElementById("myInput").value="";parse(xhd.responseText).forEach(a=>{document.getElementById("toChange").appendChild(a)})}}
-            //else{alert("Your Session Has Been Timed Out. Resetting"); location.reload();} ///logout if localhost stops asking for text(action stopped since it creates useless flaws)
         }
     }
   }, 200);
