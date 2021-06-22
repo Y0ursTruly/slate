@@ -60,7 +60,14 @@ try{
     keyCode=keysJSON[msl].private.key
     ledger=keysJSON[msl].private.ledger
     public=keysJSON[msl].public.toString()
+    console.log(specialText("Ensuring mainserver is awake(or waking it up)"))
+    await new Promise(r=>{
+      var xhr=new XMLHttpRequest()
+      xhr.open('POST',msl,true)
+      xhr.send(); xhr.onload=r
+    })
   }
+  console.log(specialText("Ready to Launch >:D"))
   
   //ngrok for port tunnelling 
   try{myAddr = await ngrok.connect(8082);}
@@ -203,7 +210,7 @@ try{
           var xhd = new XMLHttpRequest();
           xhd.open('POST', a, true);
           xhd.setRequestHeader("s", commEncrypt(theCode, "aMessage", pKeyy));
-          var sendData={text:'<b id="'+randomWarning()+'">'+theName+': </b>'+req.headers.m, pi:theName};
+          var sendData={text:'<b id="'+randomWarning()+'">'+theName+'</b>'+req.headers.m, pi:theName};
           xhd.send(commEncrypt(theCode, JSON.stringify(sendData), pKeyy));
         });
       }
