@@ -23,6 +23,23 @@ async function showShell(command){
     myChild.on('close',resolve)
   })
 }
+async function getMyKeys(message){
+  return new Promise(r=>{
+    console.log(specialText(message))
+    var xhd=new XMLHttpRequest()
+    xhd.open('POST',msl,true)
+    xhd.setRequestHeader("keys","yes")
+    xhd.send()
+    xhd.onload=function(){
+      keysJSON[msl]=JSON.parse(xhd.responseText)
+      keyCode=keysJSON[msl].private.key
+      ledger=keysJSON[msl].private.ledger
+      public=keysJSON[msl].public.toString()
+      fs.writeFileSync(__dirname+'/JSON/keys.json',JSON.stringify(keysJSON))
+      setTimeout(r,0) //if no private key for site exists(like on FIRST ever connection since u get the package)
+    }
+  })
+}
 
 var XMLHttpRequest, ngrok
 (async function() {
@@ -41,30 +58,22 @@ try{
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
   }
-  if(!keysJSON[msl]){await new Promise(r=>{
-    console.log(specialText("Obtaining first-time Keys..."))
-    var xhd=new XMLHttpRequest()
-    xhd.open('POST',msl,true)
-    xhd.setRequestHeader("keys","yes")
-    xhd.send()
-    xhd.onload=function(){
-      keysJSON[msl]=JSON.parse(xhd.responseText)
-      keyCode=keysJSON[msl].private.key
-      ledger=keysJSON[msl].private.ledger
-      public=keysJSON[msl].public.toString()
-      fs.writeFileSync(__dirname+'/JSON/keys.json',JSON.stringify(keysJSON))
-      setTimeout(r,0) //if no private key for site exists(like on FIRST ever connection since u get the package)
-    }
-  })}
+  if(!keysJSON[msl]){await getMyKeys("Obtaining first-time keys...")}
   else{
     keyCode=keysJSON[msl].private.key
     ledger=keysJSON[msl].private.ledger
     public=keysJSON[msl].public.toString()
-    console.log(specialText("Ensuring mainserver is awake(or waking it up)"))
+    console.log(specialText("Ensuring server uses your stored keys"))
     await new Promise(r=>{
       var xhr=new XMLHttpRequest()
       xhr.open('POST',msl,true)
-      xhr.send(); xhr.onload=r
+      xhr.setRequestHeader("public",public)
+      xhr.setRequestHeader("s", commEncrypt(keyCode, "makeJSON", ledger))
+      xhr.send(); xhr.onload=async function(){
+        if(xhr.responseText=="yes"){return r()}
+        await getMyKeys("Obtaining VALID Keys(server doesn't use your stored keys)")
+        return r()
+      }
     })
   }
   console.log(specialText("Ready to Launch >:D"))
