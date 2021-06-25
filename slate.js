@@ -58,12 +58,12 @@ try{
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
   }
-  if(!keysJSON[msl]){await getMyKeys("Obtaining first-time keys...")}
+  if(!keysJSON[msl]){await getMyKeys("Obtaining first-time keys for this server...")}
   else{
     keyCode=keysJSON[msl].private.key
     ledger=keysJSON[msl].private.ledger
     public=keysJSON[msl].public.toString()
-    console.log(specialText("Ensuring server uses your stored keys"))
+    console.log(specialText("Ensuring that this server uses your stored keys..."))
     await new Promise(r=>{
       var xhr=new XMLHttpRequest()
       xhr.open('POST',msl,true)
@@ -71,7 +71,7 @@ try{
       xhr.setRequestHeader("s", commEncrypt(keyCode, "makeJSON", ledger))
       xhr.send(); xhr.onload=async function(){
         if(xhr.responseText=="yes"){return r()}
-        await getMyKeys("Obtaining VALID Keys(server doesn't use your stored keys)")
+        await getMyKeys("Re-Obtaining keys for this server...")
         return r()
       }
     })
