@@ -7,7 +7,7 @@ if(\\===0){for(let item in localStorage){delete(localStorage[item])}} //reset if
 if(localStorage.opened){while(true){ alert("Slate is ALREADY opened in another browser\nPlease close this one 0_0");window.close() }}
 localStorage.opened="yes"
 window.onbeforeunload = function(){
-    delete(localStorage.opened); delete(localStorage[n]);
+    delete(localStorage.opened)
     var xhd = new XMLHttpRequest();
     xhd.open('POST', window.location.href, true);
     xhd.setRequestHeader("off", "yes");
