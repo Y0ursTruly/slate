@@ -30,14 +30,14 @@ async function getMyKeys(message){
     xhd.open('POST',msl,true)
     xhd.setRequestHeader("keys","yes")
     xhd.send(); xhd.onerror=j
-    xhd.onload=function(){
+    xhd.onload=function(){try{
       keysJSON[msl]=JSON.parse(xhd.responseText)
       keyCode=keysJSON[msl].private.key
       ledger=keysJSON[msl].private.ledger
       public=keysJSON[msl].public.toString()
       fs.writeFileSync(__dirname+'/JSON/keys.json',JSON.stringify(keysJSON))
       setTimeout(r,0) //if no private key for site exists(like on FIRST ever connection since u get the package)
-    }
+    }catch(err){throw new Error(err)}}
   })
 }
 
