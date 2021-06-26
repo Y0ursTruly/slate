@@ -1,7 +1,7 @@
 {
   "name": "the-slate",
   "version": "1.0.96",
-  "description": "Things said here are stored nowhere. User to User Communication is independent of the main-server. LIVE communication only, because of data not being stored. Once you Reload, it is a Clean Slate :D",
+  "description": "A chat client with homemade encryption that is accessible to users via a web browser. The main-server exists only as an information board which shows users where to send their messages. However, users communicating to other users is a FULLY peer to peer synchronous communication process. Once you Reload, it is a Clean Slate :D",
   "main": "none",
   "scripts": {
     "run": "node slate.js",
