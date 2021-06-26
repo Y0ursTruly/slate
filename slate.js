@@ -24,12 +24,12 @@ async function showShell(command){
   })
 }
 async function getMyKeys(message){
-  return new Promise(r=>{
+  return new Promise((r,j)=>{
     console.log(specialText(message))
     var xhd=new XMLHttpRequest()
     xhd.open('POST',msl,true)
     xhd.setRequestHeader("keys","yes")
-    xhd.send()
+    xhd.send(); xhd.onerror=j
     xhd.onload=function(){
       keysJSON[msl]=JSON.parse(xhd.responseText)
       keyCode=keysJSON[msl].private.key
@@ -64,7 +64,7 @@ try{
     ledger=keysJSON[msl].private.ledger
     public=keysJSON[msl].public.toString()
     console.log(specialText("Ensuring that this server uses your stored keys..."))
-    await new Promise(r=>{
+    await new Promise((r,j)=>{
       var xhr=new XMLHttpRequest()
       xhr.open('POST',msl,true)
       xhr.setRequestHeader("public",public)
@@ -74,6 +74,7 @@ try{
         await getMyKeys("Re-Obtaining keys for this server...")
         return r()
       }
+      xhr.onerror=j
     })
   }
   console.log(specialText("Ready to Launch >:D"))
@@ -101,7 +102,7 @@ try{
     console.log(specialText("automatic open failed, so please open a browser tab and go to 'localhost:8082' to connect"));
   }
 }
-catch(err){console.error(specialText("Slate setup-before-launch failed.. reason being:\n~"),err,specialText("\nDo you have nodejs properly installed?")); process.exit(0)}
+catch(err){console.error(specialText("Slate setup-before-launch failed.. reason being:\n~"),err,specialText("\nThe most likely reason is that the main-server is updating\nThis issue shouldn't persist long")); process.exit(0)}
 })();
 
 
