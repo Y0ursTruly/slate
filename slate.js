@@ -198,9 +198,9 @@ let lenp = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D"
 var x = http.createServer(function (req, res) {
 if(!setupComplete){return res.end("WHY are you here already, I'm not finished setting up :/")}
 try{
-  if (req.method === "GET") {  delete(toAll.closed); res.write(siter()); timesOpened++; res.end();  }
+  if (req.method === "GET") {  delete(toAll.closed); res.write(siter()); timesOpened++; res.end();  } //browser load
   else if (req.method === "POST") {
-    if (commDecrypt(keyCode, req.headers.s, ledger) === "ipList") { var datum = ""; //list of users to talk to
+    if (commDecrypt(keyCode, req.headers.s, ledger) === "ipList") { var datum = ""; //list of users to talk to(given from mainserver)
       req.on('data', chunk => {
         datum += chunk;
       }); req.on('end', () => {datum = commDecrypt(keyCode, datum, ledger); theList = datum.split(","); res.end();});
@@ -213,19 +213,22 @@ try{
     else if(req.headers.host !== "localhost:8082"){ //everything else(below) must be from localhost:8082
       res.write("For Security Reasons, you must access your local slate app at 'localhost:8082'"); res.end();
     }
-    else if (req.headers.s === "neither") {
+    else if (req.headers.s === "neither") { //client sending message to other clients
       if (req.headers.m != "" && req.headers.m != undefined) {
         theList.forEach((a,i)=>{
-          var xhd = new XMLHttpRequest();
-          xhd.open('POST', a, true);
-          xhd.setRequestHeader("s", commEncrypt(theCode, "aMessage", pKeyy));
-          var sendData={text:'<b id="'+randomWarning()+'">'+theName+'</b>'+req.headers.m, pi:theName};
-          xhd.send(commEncrypt(theCode, JSON.stringify(sendData), pKeyy));
+          try{
+            var xhd = new XMLHttpRequest();
+            xhd.open('POST', a, true);
+            xhd.setRequestHeader("s", commEncrypt(theCode, "aMessage", pKeyy));
+            var sendData={text:'<b id="'+randomWarning()+'">'+theName+'</b>'+req.headers.m, pi:theName};
+            xhd.send(commEncrypt(theCode, JSON.stringify(sendData), pKeyy));
+          }
+          catch{/*if someone customized their stuff to give a faulty url this catches instead of crashes*/}
         });
       }
       res.end();
     }
-    else if (req.headers.s === "either") {
+    else if (req.headers.s === "either") { //returning received messages to browser
       res.setHeader("oi", oi); var instaText = [];
       for (var i = 0; i < theChat.length; i++) {
         instaText[i]={};
@@ -258,7 +261,7 @@ try{
       xhd.onload = function() {res.write(xhd.responseText); res.end();}
     }
     else if (req.headers.s === "logout") {_logout(res)} //logout is a function
-    else if (req.headers.s === "createRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined) {
+    else if (req.headers.s === "createRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined) { //make room
       var zz = req.headers.z=="yes"?"yes":"no"
       var xhd = new XMLHttpRequest();
       xhd.open('POST', msl, true);
@@ -268,7 +271,7 @@ try{
       xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
       xhd.onload = function () {res.write(xhd.responseText); res.end();}
     }
-    else if (req.headers.s === "joinRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined) {
+    else if (req.headers.s === "joinRoom" && req.headers.n != undefined && req.headers.p != undefined && req.headers.z != undefined) { //join room
       var zz = req.headers.z=="yes"?"yes":"no"
       var xhd = new XMLHttpRequest();
       xhd.open('POST', msl, true);
@@ -278,7 +281,7 @@ try{
       xhd.send(commEncrypt(keyCode, JSON.stringify(sendData), ledger));
       xhd.onload = function () {if (xhd.responseText === "Success") {if (zz === "yes") {pKeyy = req.headers.n;} else {pKeyy = "";} theCode = req.headers.p;} res.write(xhd.responseText); res.end();}
     }
-    else if (req.headers.s === "makeJSON") {
+    else if (req.headers.s === "makeJSON") { //writing a newly created ledger in JSON folder(for use of custom ledger for room that uses custom ledger)
       var obj=makeLedger(); var mm = req.headers.m; if (req.headers.m === undefined || req.headers.m === "") {mm = "not named_"+randomise();} fs.writeFile(__dirname + '/JSON/('+mm+').json', JSON.stringify(obj), (err) => {if (err) throw err;});
       res.write("Successfully Created Config File"); res.end();
     }
