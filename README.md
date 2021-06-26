@@ -3,7 +3,7 @@ What's said here is stored nowhere
 #
 This is a chat client with *homemade* encryption that is accessible to users via a web browser.. However, users communicating to other users is a FULLY peer to peer synchronous communication process
 #
-The main-server exists only as an *information* board which shows users where to send their messages. The client's communications with the server include: *login, signup, logout, creating room, joining room*. The flow of data from client to main-server is
+The main-server exists only as an *information* board which shows users where to send their messages. The client's communications with the server include: *login, signup, logout, creating room, joining room, getting keys*. The *getting keys* part is because the client and the mainserver have a private & public key setup. The flow of data from client to main-server is
 <br>`browser --request--> clientLocalhost --request--> *mainserver* --response--> clientLocalhost --response--> browser`
 #
 However, in user to user communication, it is a FULLY peer to peer synchronous communication process. The flow of data from one client to another is
