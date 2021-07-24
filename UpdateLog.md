@@ -26,8 +26,10 @@ Version 1.0.7: Bug Fixes: if browser tab reloading, shell won't close, useless "
 #
 Version 1.0.8: source code used instead of executables, and when the program is loaded, an attempt is made to AUTOMATICALLY navigate to 'localhost:8082'. If action is not possible, the program would ask you to MANUALLY navigate to 'localhost:8082' instead. This version would be the first publish as an npm package
 #
-Version 1.0.9: The server side accounts have been reset, the encryption method slightly tweaked(and now for communicating with server has a public and private key setup) which means that this encryption method is asynchronous >:D
+Version 1.0.9: The server side accounts have been reset, the encryption method slightly tweaked(and now for communicating with server has a public and private key setup) which means *this is pretty cool* >:D
 #
 Version 1.0.95: automated startup(running the JavaScript file in nodejs is all that's needed)
 #
 Version 1.0.96: fix in automated startup(where the unbeforeunload part in browser didn't work properly from update 1.0.95)
+#
+Version 1.0.98: added documentation/description on how the homemade encryption method works
