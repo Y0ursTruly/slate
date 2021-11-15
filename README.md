@@ -1,7 +1,7 @@
 # Slate
 What's said here is stored nowhere
 #
-This is a chat client with *homemade* encryption that is accessible to users via a web browser.. However, users communicating to other users is a FULLY peer to peer synchronous communication process
+This is a chat client with an encryption scheme undergirded with rsa that is accessible to users via a web browser.. However, users communicating to other users is a FULLY peer to peer synchronous communication process
 #
 The main-server exists only as an *information* board which shows users where to send their messages. The client's communications with the server include: *login, signup, logout, creating room, joining room, getting keys*. The *getting keys* part is because the client and the mainserver have a private & public key setup. The flow of data from client to main-server is
 <br>`browser --request--> clientLocalhost --request--> *mainserver* --response--> clientLocalhost --response--> browser`
@@ -13,17 +13,17 @@ Remember that this is made for LIVE/SYNCHRONOUS communication. This is because I
 #
 After a reload, it's a Clean Slate
 
-## To Note
-- Yes it does sound cringey but I would like your feedback from anyone who uses it.. feel free to contact me at [paulrytaylor@gmail.com](mailto:paulrytaylor@gmail.com)
-- For info on the update history, make sure to check out *[my update log](https://github.com/Y0ursTruly/slate/blob/master/UpdateLog.md)*
-- I know I say it in the *[setup](#setup)* header but since this is source code, you would need *[node.js](https://nodejs.org/)*
-
 ## Setup
 - Make sure you have installed *[node.js](https://nodejs.org/)* since that's what the javascript files run on
 - Download *[github repository as ZIP](https://github.com/Y0ursTruly/slate/archive/refs/heads/master.zip)*, `git clone --depth=1 https://github.com/Y0ursTruly/slate.git`, OR `npm install the-slate`
 
 ## Running
 For any method of installation, running this has the same concept, `node path/to/slate/slate.js` or `cd path/to/slate;npm start`
+
+## To Note
+- Yes it does sound cringey but I would like your feedback from anyone who uses it.. feel free to contact me at [paulrytaylor@gmail.com](mailto:paulrytaylor@gmail.com)
+- For info on the update history, make sure to check out *[my update log](https://github.com/Y0ursTruly/slate/blob/master/UpdateLog.md)*
+- I know I say it in the *[setup](#setup)* header but since this is source code, you would need *[node.js](https://nodejs.org/)*
 
 ## Private Encryption Configuration(PEC)
 For The Private Encryption Configuration(PEC) option you would see in the your browser(Once Logged In) is taking advantage of a third aspect of the encryption for Slate.

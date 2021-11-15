@@ -1,6 +1,6 @@
 {
   "name": "the-slate",
-  "version": "1.0.98",
+  "version": "1.1.0",
   "description": "A chat client with homemade encryption that is accessible to users via a web browser. The main-server exists only as an information board which shows users where to send their messages. However, users communicating to other users is a FULLY peer to peer synchronous communication process. Once you Reload, it is a Clean Slate :D",
   "main": "slate.js",
   "scripts": {
@@ -15,17 +15,15 @@
   "keywords": [
     "npm",
     "git",
+    "rsa",
     "main-server-independant",
-    "forum",
-    "encrypted",
+    "peer-to-peer",
+    "chat",
     "ledger",
     "communication",
     "communication-system",
     "slate",
     "clean-slate",
-    "server",
-    "network",
-    "ledger",
     "mesh-networks",
     "decentralized",
     "pec",

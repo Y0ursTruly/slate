@@ -33,3 +33,5 @@ Version 1.0.95: automated startup(running the JavaScript file in nodejs is all t
 Version 1.0.96: fix in automated startup(where the unbeforeunload part in browser didn't work properly from update 1.0.95)
 #
 Version 1.0.98: added documentation/description on how the homemade encryption method works
+#
+Version 1.1.0: the public and private key setup from user to server now includes rsa cryptography

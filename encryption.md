@@ -13,6 +13,10 @@
 - The *text* is then translated to text values from the numeric values based on their index placing in the `alphabet` of the *ledger* and the output string is the decryption
 
 ## Current Implementations(Slate)
-- **User to Server**: upon not having a set of keys for a slate mainserver(like one seen in [mainserverlocation.txt](https://github.com/Y0ursTruly/slate/blob/master/mainserverlocation.txt)), which should only occur upon installation, your client asks for keys.. now for loading it any time after and any other interaction ever, that private set of keys is never shared again and user and server communicate in their own little world and all the client does is share a public number and both sides know what to do
-- **User to User**: The mainserver gives clients a list of who is in the same Chat Room, then the clients communicate with each other through sending requests to the users of that list.. however users would only see messages if they share the same ledger(ledgers formed and used are server independent)
-- **Server Storage**: Passwords are never stored, but passwords are used to encrypt text and logins are verified if a password correctly decrypts text
+- **User to Server**: 
+<br>- Upon not having a set of keys for a slate mainserver(like one seen in [mainserverlocation.txt](https://github.com/Y0ursTruly/slate/blob/master/mainserverlocation.txt)), which should only occur upon installation, your client asks for keys and sends an rsa public key, then the server uses that key to encrypt a public number, a private key and private ledger which would be used for the rest of server communications..
+<br>- Now for loading it any time after and any other interaction ever(unless you lose your keys), that private set of keys(the private key and private ledger) is never shared again and user and server communicate in their own little world and all the client does is share a public number and both sides know what to do
+- **User to User**:
+<br>- The mainserver gives clients a list of who is in the same Chat Room, then the clients communicate with each other through sending requests to the users of that list.. however users would only see messages if they share the same ledger(ledgers formed and used are server independent)
+- **Server Storage**:
+<br>- Passwords are never stored, but passwords are used to encrypt text and logins are verified if a password correctly decrypts text

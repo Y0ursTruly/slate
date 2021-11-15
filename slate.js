@@ -1,6 +1,7 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
+var {rsa_decrypt,get_RSA_keys,make_RSA_keys}=require('./myRSA.js');
 var site = fs.readFileSync(__dirname + '/localhost.html').toString();
 var siter = () => site.split('\\\\').join(timesOpened);
 var theChat = []; var theList = []; var toAll = {};
@@ -25,14 +26,16 @@ async function showShell(command){
 }
 async function getMyKeys(message){
   return new Promise((r,j)=>{
+    try{ var[rsa_private,rsa_public]=get_RSA_keys('slate') }
+    catch{ var[rsa_private,rsa_public]=make_RSA_keys('slate') }
     console.log(specialText(message))
     var xhd=new XMLHttpRequest()
     xhd.open('POST',msl,true)
     xhd.setRequestHeader("keys","yes")
-    xhd.send(); xhd.onerror=j
+    xhd.send(rsa_public); xhd.onerror=j
     xhd.onload=function(){
       try{
-        keysJSON[msl]=JSON.parse(xhd.responseText)
+        keysJSON[msl]=JSON.parse(rsa_decrypt(rsa_private,xhd.responseText))
         keyCode=keysJSON[msl].private.key
         ledger=keysJSON[msl].private.ledger
         public=keysJSON[msl].public.toString()
@@ -44,7 +47,7 @@ async function getMyKeys(message){
   })
 }
 
-var XMLHttpRequest, ngrok
+var XMLHttpRequest, ngrok;
 (async function() {
 try{
   try{
@@ -124,7 +127,7 @@ catch(err){console.error(specialText("Slate setup-before-launch failed.. reason 
 function commEncrypt (key, data, pKey1) {
   if(pKey1==undefined){pKey1=""}var pKeyTEXT=null
   if(typeof pKey1=="object"){pKeyTEXT=pKey1}
-  else{  try{pKeyTEXT = JSON.parse(fs.readFileSync(__dirname + '/JSON/(' + pKey1 + ').json').toString());}catch(err){return("")}  }
+  else if(pKey1!=""){  try{pKeyTEXT = JSON.parse(fs.readFileSync(__dirname + '/JSON/(' + pKey1 + ').json').toString());}catch(err){return("")}  }
   if (key === undefined || data === undefined) {return("")} if (data.length === 0 || key.length === 0) {return("")}
   return encrypt(key,data,pKeyTEXT)||"" //if encrypt action not possible, null returned
 }
@@ -134,7 +137,7 @@ function commEncrypt (key, data, pKey1) {
 function commDecrypt (key, data, pKey1) {
   if(pKey1==undefined){pKey1=""}var pKeyTEXT=null
   if(typeof pKey1=="object"){pKeyTEXT=pKey1}
-  else{  try{pKeyTEXT = JSON.parse(fs.readFileSync(__dirname + '/JSON/(' + pKey1 + ').json').toString());}catch(err){return("")}  }
+  else if(pKey1!=""){  try{pKeyTEXT = JSON.parse(fs.readFileSync(__dirname + '/JSON/(' + pKey1 + ').json').toString());}catch(err){return("")}  }
   if (key === undefined || data === undefined) {return("")} if (data.length === 0 || key.length === 0) {return("")}
   return decrypt(key,data,pKeyTEXT)||"" //if encrypt action not possible, null returned
 }
