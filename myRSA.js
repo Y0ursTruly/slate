@@ -6,8 +6,11 @@ const btoa=(text)=>Buffer.from(text,'binary').toString('base64')
 let oaepHash="sha256"
 
 function str2ab(str) {
-    const buf = new ArrayBuffer(str.length);
-    const bufView = new Uint8Array(buf);
+    const buf = Buffer.alloc(str.length);
+    const bufView = buf;
+    //const buf = new ArrayBuffer(str.length);
+    //const bufView = new Uint8Array(buf);
+    //apparently some crypto versions don't support ArrayBuffers >:{
     for (let i = 0, strLen = str.length; i < strLen; i++) {
         bufView[i] = str.charCodeAt(i);
     }
