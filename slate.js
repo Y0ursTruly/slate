@@ -59,7 +59,8 @@ try{
     console.log(specialText("Installing Dependencies..."))
     let directory=process.argv[1].split('').map(letter=>letter=='"'?"\\"+letter:letter).join('')
     directory=directory.substr(0, directory.length-9)
-    await showShell(`cd "${directory}";npm update`)
+    await showShell(`cd "${directory}"`)
+    await showShell("npm update")
     XMLHttpRequest=require("xmlhttprequest")
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
