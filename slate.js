@@ -46,6 +46,25 @@ async function getMyKeys(message){
     }
   })
 }
+async function wakeUp(n){
+  //sometimes the mainserver is sleeping so this is to wake it up
+  n=n||0 //the MAX amount of time trying to wake up server would be ~ 35 seconds
+  if(n>5){
+    console.log(specialText("mainserver is not waking up right now.. maybe it's updating"))
+    process.exit(0) //at this point, continuing to try wouldn't make sense
+  }
+  if(n){console.log(specialText(`Wake up Attempt ${n}/5`))}
+  return await new Promise((r,j)=>{
+    var xhd=new XMLHttpRequest()
+    xhd.open('GET',msl,true)
+    let recurse=()=>{
+      xhd.onload=()=>{} //stops trying this instance of request after 5 seconds
+      wakeUp(n+1).then(r) //so another instance of a request is tried
+    }
+    let s=setTimeout(recurse,7e3); xhd.onerror=recurse
+    xhd.send(); xhd.onload=()=>r(clearTimeout(s))
+  })
+}
 
 var XMLHttpRequest, ngrok;
 (async function() {
@@ -65,6 +84,8 @@ try{
     XMLHttpRequest=XMLHttpRequest.XMLHttpRequest
     ngrok=require('ngrok')
   }
+  console.log(specialText("Ensuring this mainserver is awake..."))
+  await wakeUp()
   if(!keysJSON[msl]){await getMyKeys("Obtaining first-time keys for this server...")}
   else{
     keyCode=keysJSON[msl].private.key
