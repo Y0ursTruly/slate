@@ -35,3 +35,5 @@ Version 1.0.96: fix in automated startup(where the unbeforeunload part in browse
 Version 1.0.98: added documentation/description on how the homemade encryption method works
 #
 Version 1.1.0: the public and private key setup from user to server now includes rsa cryptography
+#
+Version 1.1.1: Small bugs fixed + it ensures main-server is awake before other setup activities
