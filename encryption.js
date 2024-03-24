@@ -3,23 +3,23 @@ var padding=crypto.constants.RSA_PKCS1_OAEP_PADDING
 var rootDir=__dirname+(process.platform=="win32"?"\\":"/")
 const atob=(text)=>Buffer.from(text,'base64').toString('binary')
 const btoa=(text)=>Buffer.from(text,'binary').toString('base64')
-let oaepHash="sha256"
+const oaepHash="sha256", SEAL=require('node-seal')
+let seal=null, seal_generator=null, seal_encoder=null, seal_evaluator=null
 
-function str2ab(str) {
-    const buf = Buffer.alloc(str.length);
-    const bufView = buf;
-    //const buf = new ArrayBuffer(str.length);
-    //const bufView = new Uint8Array(buf);
-    //apparently some crypto versions don't support ArrayBuffers >:{
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
-    }
-    return buf;
+function str2ab(str,typedarray) {
+  let buf=Buffer.alloc(str.length);
+  for (let i=0;i<str.length;i++) buf[i]=str_map[str[i]];
+  return !typedarray? buf: new typedarray(buf);
 }
-function ab2str(buf,getOwnPropertyNames) {
-    var buff=new Uint8Array(buf)
-    return Object.getOwnPropertyNames(buff)
-    .map(i=>String.fromCharCode(buff[i])).join('')
+function ab2str(buf) {
+  let arr=new Uint8Array(buf), chars="";
+  for(let i=0;i<arr.length;i++) chars+=ab_map[arr[i]];
+  return chars;
+}
+function int32From(data){
+  if(typeof data==="string") return str2ab(data,Int32Array);
+  if(data[Symbol.toStringTag]!=="Int32Array") return new Int32Array(data);
+  return data;
 }
 
 function make_RSA_keys(key_name){
@@ -61,6 +61,49 @@ function rsa_encrypt(key,text){
     let result=crypto.publicEncrypt({key,padding,oaepHash},data)
     return btoa(ab2str(result))
   }) )
+}
+
+async function seal_init(){
+  seal = await SEAL()
+  const schemeType = seal.SchemeType.bfv
+  const securityLevel = seal.SecurityLevel.tc128
+  const polyModulusDegree = 4096
+  const bitSizes = [36, 36, 37]
+  const bitSize = 20
+
+  const parms = seal.EncryptionParameters(schemeType)
+  // Set the PolyModulusDegree
+  parms.setPolyModulusDegree(polyModulusDegree)
+  // Create a suitable set of CoeffModulus primes
+  parms.setCoeffModulus(
+    seal.CoeffModulus.Create(polyModulusDegree, Int32Array.from(bitSizes))
+  )
+  // Set the PlainModulus to a prime of bitSize 20.
+  parms.setPlainModulus(
+    seal.PlainModulus.Batching(polyModulusDegree, bitSize)
+  )
+  context = seal.Context(
+    parms, // Encryption Parameters
+    true, // ExpandModChain
+    securityLevel // Enforce a security level
+  )
+  seal_encoder = seal.BatchEncoder(context)
+  seal_generator = seal.KeyGenerator(context)
+  seal_evaluator = seal.Evaluator(context)
+}
+function get_SEAL_keys(){
+  //
+}
+function set_SEAL_keys(){
+  //
+}
+function seal_encrypt(data,pub){
+  return seal.Encryptor(context, pub)
+  .encrypt(encoder.encode(int32From(data)))
+}
+function seal_decrypt(data,prv){
+  return seal.Decryptor(context, pub)
+  .decrypt(encoder.encode(int32From(data)))
 }
 
 module.exports={rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab}
