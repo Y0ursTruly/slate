@@ -1,5 +1,4 @@
-//not NEAAR done yet btw but the length of the encrypted texts CAN be an issue
-//makeLedger logic fixed and LESS "0"s(now I think NONE) in the matrix formed when key matrix and text matrix are multiplied
+//relic of my past, of the first coding project I engaged in :D
 var defaultLedger={
     "leno": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ">", "<", "-", "_", "+", "=", "{", ":", "\\", "[", "]", "|", ",", ".", "?", "/", "'", "\"", "}", ";", " "],
     "lepo": ["1^(3)", "2^(3)", "3^(3)", "4^(3)", "5^(3)", "6^(3)", "7^(3)", "8^(3)", "9^(3)", "10^(3)", "1^(2)", "2^(2)", "3^(2)", "4^(2)", "5^(2)", "6^(2)", "7^(2)", "8^(2)", "9^(2)", "10^(2)", "11^(2)", "12^(2)", "13^(2)", "14^(2)", "15^(2)", "16^(2)", "17^(2)", "18^(2)", "19^(2)", "20^(2)", "21^(2)", "22^(2)", "23^(2)", "24^(2)", "25^(2)", "26^(2)", "1^(1)", "2^(1)", "3^(1)", "4^(1)", "5^(1)", "6^(1)", "7^(1)", "8^(1)", "9^(1)", "10^(1)", "11^(1)", "12^(1)", "13^(1)", "14^(1)", "15^(1)", "16^(1)", "17^(1)", "18^(1)", "19^(1)", "20^(1)", "21^(1)", "22^(1)", "23^(1)", "24^(1)", "25^(1)", "26^(1)", "1^(4)", "2^(4)", "3^(4)", "4^(4)", "5^(4)", "6^(4)", "7^(4)", "8^(4)", "9^(4)", "10^(4)", "11^(4)", "12^(4)", "13^(4)", "14^(4)", "15^(4)", "16^(4)", "17^(4)", "18^(4)", "19^(4)", "20^(4)", "21^(4)", "22^(4)", "23^(4)", "24^(4)", "25^(4)", "26^(4)", "27^(4)", "28^(4)", "29^(4)", "30^(4)", "31^(4)", "32^(4)", "33^(4)"],
@@ -8,7 +7,7 @@ var defaultLedger={
     "o36": ",36^(4)," //part of number
 }
 const {floor,ceil,pow,round}=Math;
-const random=_=> crypto.webcrypto.getRandomValues(new Uint32Array(1))[0] / pow(2,32);
+const random=_=> (crypto.webcrypto||crypto).getRandomValues(new Uint32Array(1))[0] / pow(2,32);
 //join function below is significantly faster than Array.prototype.join no cap
 function join(array,joiner){
   let string=""; //the string that will be returned
@@ -55,9 +54,9 @@ function makeLedger(chars,RANGE){
   if(chars!==undefined){
     let err="If the 'chars' argument is given, it MUST be an ARRAY of 1 length STRINGS"
     if(!Array.isArray(chars)){throw new TypeError(err)}
-    const maxNumFromChars=121*( (2*(chars.length-1))**2 )-120; //4313922
+    const maxNumFromChars=(2*(chars.length-1))**2
+    //this only goes above Number.MAX_SAFE_INTEGER when the length is MORE THAN 47453133 LOL
     if(maxNumFromChars>Number.MAX_SAFE_INTEGER){throw new RangeError("The length of the given array is too long")}
-    if(chars.length<13){throw new RangeError("The length of the given array is too short")}
     for(let i=0;i<chars.length;i++){
       if(typeof chars[i]!=="string"){throw new TypeError(err+`\nCaused by chars[${i}]`)}
       if(chars[i].length!==1){throw new TypeError(err+`\nCaused by chars[${i}]`)}
@@ -141,7 +140,7 @@ function alphaEnc (nums, alphabet, key) { //encodes an array of numbers based on
     let o1=1, o0=0, myNum=nums[i], toPut=[], base=alphabet.length;
     let keyCount = key.reduce((a,b,i1)=>a + (key[i1-1]*2 +b-1));
     for(let c=0;c<=i%key.length;c++){ keyCount+=key[c] }
-    myNum = (myNum*keyCount)+keyCount;
+    myNum *= keyCount;
     while (myNum > 0) {
       //until all the value is extracted, keep encoding based on the alphabet
       var toNum = (myNum % pow(base, o1)) / pow(base, o0);
@@ -167,8 +166,7 @@ function alphaDec (data, alphabet, key) {
       toAdd += (toAddto * pow(alphabet.length, power++));
     }
     for(let j=0;j<=i%key.length;j++){ toDivide+=key[j] }
-    toAdd=(toAdd-toDivide)/toDivide;
-    answWerr.push(toAdd);
+    toAdd/=toDivide; answWerr.push(toAdd);
   }
   return(answWerr);
 }
@@ -321,6 +319,7 @@ function decrypt (key, data, ledger) {
   for(let i=0;i<commDecryption.length;i++){
     commDecryption[i] = alphaDec(commDecryption[i], lepo, key);
   }
+  console.log("after",commDecryption,{temp})
   let eq1=0, eq2=1, x1=key[(2*eq1)], y1=key[(2*eq1)+1], x2=key[(2*eq2)], y2=key[(2*eq2)+1];
   while ((x1===0&&y1===0)||(x2===0&&y2===0)) {
     eq1++; eq2++; x1=key[(2*eq1)]; y1=key[(2*eq1)+1]; x2=key[(2*eq2)]; y2=key[(2*eq2)+1];
