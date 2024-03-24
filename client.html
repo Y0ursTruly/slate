@@ -1,0 +1,122 @@
+<html>
+<head>
+
+<link rel="shortcut icon" href="https://cdn.pixabay.com/photo/2014/04/03/10/52/circle-311551_960_720.png" type="image/x-icon"/>
+<title>Slate</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font:13px Helvetica, Arial; background-color:#000; position:absolute; top:0; bottom:0; left:0; right:0;
+  }
+  #messages {
+    list-style-type: none; height: 90%; width:70%; padding: 7px; overflow-y: auto;
+  }
+  #messages li {
+    padding: 5px; margin:2px; font-size: 20px; word-wrap:break-word; color:white; border-radius:5px; margin:5px; background: green;
+  }
+  /*#messages li:nth-child(odd) { background: #56026b; }
+  #messages li:nth-child(even) { background: #035e09; }*/
+  form {
+    background:#035e09; padding:3px; position:fixed; bottom:0; width:100%;
+  }
+  textarea {
+    border:0; padding:10px; font-size:20px; width:90%; vertical-align: bottom;
+  }
+  form button {
+    width:9%; background:lightgreen; border:none; padding:10px; height:50px; align:top; /*#82e0ff*/
+  }
+  #sidebar {
+    width:25%; height:85%; margin:12px; background:#035e09; padding:12px; color:black; float:right; border-radius:5px; /*#c29006;*/
+  }
+  input { width:47%; padding:7px; font-size:12px; align:top; margin:1%; }
+  div button { border-radius:5px; background:#56026b; width:99%; height:7%; margin:1%; color:white; }
+  #members {
+    width:99%; height:65%; background:lightgreen; padding:5px; border-radius:5px; margin:1%; /*#cf0614*/
+  }
+  /*below adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_custom_scrollbar2*/
+  ::-webkit-scrollbar { width: 20px; }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #035e09; 
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: lightgreen; }
+</style>
+
+</head>
+
+
+
+
+<body>
+
+<div id="sidebar">
+  <input placeholder="Room Name" id="roomName" type="text"></input>
+  <input placeholder="Room Password" id="roomPass" type="password"></input>
+  <button id="createRoom" title="Create Room (if it does not exist)">Create Room</button>
+  <button id="joinRoom" title="Join Room (if it exists)">Join Room</button>
+  <button id="reset" title="Reset Cryptographic Identity">Reset Identity</button>
+  <div id="members"></div>
+</div>
+<ul id="messages"></ul>
+<form action="javascript:submitmsg()" id="f">
+  <textarea id="t" autocomplete="off" width="800"></textarea>
+  <button>Send</button>
+</form>
+
+<script>
+var tasks=new Map(), count=1 //tasks is a cache for every request where each id contains resolve and reject functions for that request
+var text=document.getElementById('t')
+var form=document.getElementById('f')
+var members=document.getElementById('members')
+var messages=document.getElementById('messages')
+var shell=new WebSocket(`ws://${location.host}:8082`)
+
+setTimeout(()=>shell.send("PING"),2000)
+shell.addEventListener('message',({data})=>{
+  const {id,content,error,type}=JSON.parse(data)
+  if(type==="message"){
+    let li=document.createElement('li')
+    li.innerText=content
+    messages.appendChild(li)
+    //return messages.scrollTo(0,messages.scrollHeight)
+    return messages.scrollIntoView({behavior:"smooth", block:"end", inline:"nearest"})
+  }
+  error? tasks.get(id).fail(content): tasks.get(id).pass(content)
+})
+function newTask(){
+  let pass=null, fail=null, id=count++
+  let task=new Promise((resolve,reject)=>{
+    pass=resolve; fail=reject
+  })
+  tasks.set(id,{pass,fail})
+  return {task,id}
+}
+
+//now for all the code that adds tasks :D
+function submitmsg(){
+  let textBox=form.children[0]
+  if(!textBox.value) return null;
+  const {id}=newTask() //task not needed here
+  let content=textBox.value; textBox.value=""
+  shell.send(JSON.stringify( {type:"message",content,id} ))
+}
+text.addEventListener('keypress',function(e){
+  if(!e.shiftKey&&e.key=="Enter"){
+    form.submit()
+    e.preventDefault()
+  }
+})
+document.getElementById('createRoom').addEventListener('click',e=>{
+  const {task,id}=newTask()
+})
+document.getElementById('joinRoom').addEventListener('click',e=>{
+  const {task,id}=newTask()
+})
+</script>
+
+</body>
+</html>
