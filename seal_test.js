@@ -62,7 +62,9 @@
   console.log("hm",cipherText.instance,cipherText.saveArray())
 
   // Add the CipherText to itself and store it in the destination parameter (itself)
+  console.log("t1",evaluator.add(cipherText,cipherText).saveArray())
   evaluator.add(cipherText, cipherText, cipherText) // Op (A), Op (B), Op (Dest)
+  console.log("t2",cipherText.saveArray())
 
   // Or create return a new cipher with the result (omitting destination parameter)
   // const cipher2x = evaluator.add(cipherText, cipherText)

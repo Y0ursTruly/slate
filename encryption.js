@@ -21,6 +21,12 @@ function int32From(data){
   if(data[Symbol.toStringTag]!=="Int32Array") return new Int32Array(data);
   return data;
 }
+function arraysEqual(arr1,arr2){
+  if(arr1.length!==arr2.length) return false;
+  for(let i=0;i<arr1.length;i++)
+    if(arr1[i]!==arr2[i]) return false;
+  return true;
+}
 
 function make_RSA_keys(key_name){
   let publicKeyEncoding={type:'spki',format:'pem'}
@@ -126,6 +132,6 @@ function seal_add(cipher_text1, cipher_text2){
 }
 
 module.exports={
-  rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,
+  rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,arraysEqual,
   seal_encrypt,seal_decrypt,seal_add,seal_init,make_SEAL_keys,get_SEAL_keys
 }

@@ -1,7 +1,7 @@
 (async function(){
   var http=require('http'), https=require('https'), fs=require('fs');
   var {
-    rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,
+    rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,arraysEqual,
     seal_encrypt,seal_decrypt,seal_add,seal_init,make_SEAL_keys,get_SEAL_keys
   }=require('./encryption.js');
   var site = fs.readFileSync(__dirname + '/client.html').toString();
