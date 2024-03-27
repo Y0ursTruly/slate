@@ -41,9 +41,12 @@
 
   const encoder = seal.BatchEncoder(context)
   const keyGenerator = seal.KeyGenerator(context)
-  const publicKey = keyGenerator.createPublicKey()
-  console.log(publicKey,publicKey.instance)
   const secretKey = keyGenerator.secretKey()
+  const publicKey = keyGenerator.createPublicKey()
+  //console.log(publicKey,publicKey.instance)
+  let __temp=seal.PublicKey()
+  __temp.loadArray(context,publicKey.saveArray())
+  console.log( "meh", seal.PublicKey, __temp.saveArray() )
   const encryptor = seal.Encryptor(context, publicKey)
   const decryptor = seal.Decryptor(context, secretKey)
   const evaluator = seal.Evaluator(context)
@@ -56,7 +59,7 @@
 
   // Encrypt the PlainText
   const cipherText = encryptor.encrypt(plainText)
-  console.log(cipherText.instance,cipherText.saveArray())
+  console.log("hm",cipherText.instance,cipherText.saveArray())
 
   // Add the CipherText to itself and store it in the destination parameter (itself)
   evaluator.add(cipherText, cipherText, cipherText) // Op (A), Op (B), Op (Dest)

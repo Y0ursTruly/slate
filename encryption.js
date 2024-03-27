@@ -4,15 +4,15 @@ var rootDir=__dirname+(process.platform=="win32"?"\\":"/")
 const atob=(text)=>Buffer.from(text,'base64').toString('binary')
 const btoa=(text)=>Buffer.from(text,'binary').toString('base64')
 const oaepHash="sha256", SEAL=require('node-seal')
-let seal=null, seal_generator=null, seal_encoder=null, seal_evaluator=null
+let seal=null, seal_generator=null, seal_encoder=null, seal_evaluator=null, seal_map=new WeakMap()
 
 function str2ab(str,typedarray) {
   let buf=Buffer.alloc(str.length);
   for (let i=0;i<str.length;i++) buf[i]=str_map[str[i]];
   return !typedarray? buf: new typedarray(buf);
 }
-function ab2str(buf) {
-  let arr=new Uint8Array(buf), chars="";
+function ab2str(buf,isUint8) {
+  let arr=!isUint8? new Uint8Array(buf): buf, chars="";
   for(let i=0;i<arr.length;i++) chars+=ab_map[arr[i]];
   return chars;
 }
@@ -91,19 +91,41 @@ async function seal_init(){
   seal_generator = seal.KeyGenerator(context)
   seal_evaluator = seal.Evaluator(context)
 }
-function get_SEAL_keys(){
-  //
+function make_SEAL_keys(key_name){
+  let prv=seal_generator.secretKey(), pub=seal_generator.createPublicKey()
+  fs.writeFileSync(rootDir+key_name+'-prv.bin',prv.saveArray())
+  fs.writeFileSync(rootDir+key_name+'-pub.bin',pub.saveArray())
+  return [prv,pub]
 }
-function set_SEAL_keys(){
-  //
-}
-function seal_encrypt(data,pub){
-  return seal.Encryptor(context, pub)
-  .encrypt(encoder.encode(int32From(data)))
+function get_SEAL_keys(key_name){
+  let uint8prv=new Uint8Array(fs.readFileSync(rootDir+key_name+'-prv.bin'))
+  let uint8pub=new Uint8Array(fs.readFileSync(rootDir+key_name+'-pub.bin'))
+  let prv=seal.PrivateKey(), pub=seal.PublicKey()
+  prv.loadArray(uint8prv)
+  pub.loadArray(uint8pub)
+  return [prv,pub]
 }
 function seal_decrypt(data,prv){
-  return seal.Decryptor(context, pub)
-  .decrypt(encoder.encode(int32From(data)))
+  if(!seal_map.has(prv)) seal_map.set(prv,seal.Decryptor(context,prv));
+  const interface=map.get(prv);
+  let result=interface.decrypt(encoder.encode(int32From(data))).saveArray()
+  return ab2str(result,true)
+  //return seal.Decryptor(context, prv)
+  //.decrypt(encoder.encode(int32From(data)))
+}
+function seal_encrypt(data,pub){
+  if(!seal_map.has(pub)) seal_map.set(pub,seal.Decryptor(context,pub));
+  const interface=map.get(pub);
+  let result=interface.encrypt(encoder.encode(int32From(data))).saveArray()
+  return ab2str(result,true)
+  //return seal.Encryptor(context, pub)
+  //.encrypt(encoder.encode(int32From(data)))
+}
+function seal_add(cipher_text1, cipher_text2){
+  return seal_evaluator.add(cipher_text1, cipher_text2)
 }
 
-module.exports={rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab}
+module.exports={
+  rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,
+  seal_encrypt,seal_decrypt,seal_add,seal_init,make_SEAL_keys,get_SEAL_keys
+}

@@ -1,6 +1,9 @@
 (async function(){
   var http=require('http'), https=require('https'), fs=require('fs');
-  var {rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,seal_init}=require('./encryption.js');
+  var {
+    rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,
+    seal_encrypt,seal_decrypt,seal_add,seal_init,make_SEAL_keys,get_SEAL_keys
+  }=require('./encryption.js');
   var site = fs.readFileSync(__dirname + '/client.html').toString();
   function log(text){console.log('\x1b[1m\x1b[33m'+text+'\x1b[0m')}
   try{ var[rsa_private,rsa_public]=get_RSA_keys('slate') }
