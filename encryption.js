@@ -16,6 +16,16 @@ function ab2str(buf,isUint8) {
   for(let i=0;i<arr.length;i++) chars+=ab_map[arr[i]];
   return chars;
 }
+function str2bfr(str,typedarray) {
+  let buf=Buffer.alloc(str.length);
+  for (let i=0;i<str.length;i++) buf[i]=str_map[str[i]];
+  return !typedarray? buf: new typedarray(buf);
+}
+function bfr2str(buf) {
+  let chars="";
+  for(let i=0;i<buf.length;i++) chars+=ab_map[buf[i]];
+  return chars;
+}
 function int32From(data){
   if(typeof data==="string") return str2ab(data,Int32Array);
   if(data[Symbol.toStringTag]!=="Int32Array") return new Int32Array(data);
@@ -131,7 +141,39 @@ function seal_add(cipher_text1, cipher_text2){
   return seal_evaluator.add(cipher_text1, cipher_text2)
 }
 
+async function aes_enc(data,key,s,throwErrors){
+  return new Promise(function(resolve,reject){
+    crypto.scrypt(key,s,32,function(err,key){
+      if(err) return throwErrors?reject(err):resolve("");
+      const iv=Buffer.from( crypto.getRandomValues(new Uint8Array(16)) )
+      let cipher=crypto.createCipheriv('aes-256-ctr',key,iv), str=bfr2str(iv)
+      cipher.on('error',function(err){throwErrors?reject(err):resolve("")})
+      cipher.on('data',function(chunk){str+=bfr2str(chunk)})
+      cipher.on('end',function(){resolve(btoa(str))})
+      cipher.write(data)
+      cipher.end()
+    })
+  })
+}
+async function aes_dec(base64str,key,s,throwErrors){
+  const encrypted=atob(base64str), iv=str2bfr(encrypted.substring(0,16)), data=encrypted.substring(16)
+  return new Promise(function(resolve,reject){
+    crypto.scrypt(key,s,32,function(err,key){
+      if(err) return throwErrors?reject(err):resolve("");
+      let decipher=crypto.createDecipheriv('aes-256-ctr',key,iv), str=""
+      decipher.on('readable',function(){
+        for(let chunk=decipher.read(); chunk!==null; chunk=decipher.read())
+          str+=bfr2str(chunk);
+      })
+      decipher.on('error',function(err){throwErrors?reject(err):resolve("")})
+      decipher.on('end',function(){resolve(str)})
+      decipher.write(data,'binary')
+      decipher.end()
+    })
+  })
+}
+
 module.exports={
-  rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,arraysEqual,
-  seal_encrypt,seal_decrypt,seal_add,seal_init,make_SEAL_keys,get_SEAL_keys
+  rsa_encrypt,rsa_decrypt,get_RSA_keys,make_RSA_keys,ab2str,str2ab,bfr2str,str2bfr,arraysEqual,
+  seal_encrypt,seal_decrypt,seal_add,seal_init,make_SEAL_keys,get_SEAL_keys,aes_enc,aes_dec
 }
