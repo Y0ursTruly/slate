@@ -3,7 +3,7 @@ var padding=crypto.constants.RSA_PKCS1_OAEP_PADDING
 var rootDir=__dirname+(process.platform=="win32"?"\\":"/")
 const atob=(text)=>Buffer.from(text,'base64').toString('binary')
 const btoa=(text)=>Buffer.from(text,'binary').toString('base64')
-const oaepHash="sha256", SEAL=require('node-seal')
+const oaepHash="sha256", SEAL=require('node-seal'), kyber=require('crystals-kyber')
 let seal=null, seal_generator=null, seal_encoder=null, seal_context=null, seal_evaluator=null
 
 let ab_map=[], str_map={__proto__:null}, seal_map=new WeakMap()
@@ -49,6 +49,43 @@ function arraysEqual(arr1,arr2){
   return true
 }
 
+async function aes_enc(data,key,s,throwErrors){
+  s ||= String(salt)
+  key ||= String(aes256key)
+  return new Promise(function(resolve,reject){
+    scrypt(key,s,32,function(err,key){
+      if(err) return throwErrors?reject(err):resolve("");
+      const iv=Buffer.from( (crypto.webcrypto||crypto).getRandomValues(new Uint8Array(16)) )
+      let cipher=createCipheriv('aes-256-ctr',key,iv), str=bfr2str(iv)
+      cipher.on('error',function(err){throwErrors?reject(err):resolve("")})
+      cipher.on('data',function(chunk){str+=bfr2str(chunk)})
+      cipher.on('end',function(){resolve(btoa(str))})
+      cipher.write(data)
+      cipher.end()
+    })
+  })
+}
+async function aes_dec(base64str,key,s,throwErrors){
+  s ||= String(salt)
+  key ||= String(aes256key)
+  const encrypted=atob(base64str), iv=str2bfr(encrypted.substring(0,16)), data=encrypted.substring(16)
+  return new Promise(function(resolve,reject){
+    //scryptPbkdf.scrypt(key,s,32,{N:16384,r:8,p:1}).then(function(key,err){
+    scrypt(key,s,32,function(err,key){
+      if(err) return throwErrors?reject(err):resolve("");
+      let decipher=createDecipheriv('aes-256-ctr',key,iv), str=""
+      decipher.on('readable',function(){
+        for(let chunk=decipher.read(); chunk!==null; chunk=decipher.read())
+          str+=bfr2str(chunk);
+      })
+      decipher.on('error',function(err){throwErrors?reject(err):resolve("")})
+      decipher.on('end',function(){resolve(str)})
+      decipher.write(data,'binary')
+      decipher.end()
+    })
+  })
+}
+
 function make_RSA_keys(key_name){
   let publicKeyEncoding={type:'spki',format:'pem'}
   let privateKeyEncoding={type:'pkcs8',format:'pem'}
@@ -89,6 +126,30 @@ function rsa_encrypt(key,text){
     let result=crypto.publicEncrypt({key,padding,oaepHash},data)
     return btoa(ab2str(result))
   }) )
+}
+
+function make_KYBER_keys(key_name){
+  const [_pk,_sk]=kyber.KeyGen768()
+  const sk=Buffer.from(_sk), pk=Buffer.from(_pk)
+  fs.writeFileSync( path.join(rootDir,key_name+'-sk.bin'),sk )
+  fs.writeFileSync( path.join(rootDir,key_name+'-pk.bin'),pk )
+  return [sk,pk]
+}
+function get_KYBER_keys(key_name){
+  return [
+    fs.readFileSync( path.join(rootDir,key_name+'-sk.bin') ),
+    fs.readFileSync( path.join(rootDir,key_name+'-pk.bin') )
+  ]
+}
+function remove_KYBER_keys(key_name){
+  fs.unlinkSync( path.join(rootDir,key_name+'-sk.bin') )
+  fs.unlinkSync( path.join(rootDir,key_name+'-pk.bin') )
+}
+function kyber_decrypt(encrypted_key,sk){
+  return kyber.Decrypt768(encrypted_key,sk) //returns the decrypted key
+}
+function kyber_encrypt(pk){
+  return kyber.Encrypt768(pk) //returns [encrypted_key,key]
 }
 
 async function seal_init(){
@@ -159,45 +220,9 @@ function seal_add(cipher_text1, cipher_text2){
   return ab2str( seal_evaluator.add(ciphertext1, ciphertext2).saveArray(),true )
 }
 
-async function aes_enc(data,key,s,throwErrors){
-  s ||= String(salt)
-  key ||= String(aes256key)
-  return new Promise(function(resolve,reject){
-    scrypt(key,s,32,function(err,key){
-      if(err) return throwErrors?reject(err):resolve("");
-      const iv=Buffer.from( (crypto.webcrypto||crypto).getRandomValues(new Uint8Array(16)) )
-      let cipher=createCipheriv('aes-256-ctr',key,iv), str=bfr2str(iv)
-      cipher.on('error',function(err){throwErrors?reject(err):resolve("")})
-      cipher.on('data',function(chunk){str+=bfr2str(chunk)})
-      cipher.on('end',function(){resolve(btoa(str))})
-      cipher.write(data)
-      cipher.end()
-    })
-  })
-}
-async function aes_dec(base64str,key,s,throwErrors){
-  s ||= String(salt)
-  key ||= String(aes256key)
-  const encrypted=atob(base64str), iv=str2bfr(encrypted.substring(0,16)), data=encrypted.substring(16)
-  return new Promise(function(resolve,reject){
-    //scryptPbkdf.scrypt(key,s,32,{N:16384,r:8,p:1}).then(function(key,err){
-    scrypt(key,s,32,function(err,key){
-      if(err) return throwErrors?reject(err):resolve("");
-      let decipher=createDecipheriv('aes-256-ctr',key,iv), str=""
-      decipher.on('readable',function(){
-        for(let chunk=decipher.read(); chunk!==null; chunk=decipher.read())
-          str+=bfr2str(chunk);
-      })
-      decipher.on('error',function(err){throwErrors?reject(err):resolve("")})
-      decipher.on('end',function(){resolve(str)})
-      decipher.write(data,'binary')
-      decipher.end()
-    })
-  })
-}
-
 module.exports={
   ab2str, str2ab, bfr2str, str2bfr, arraysEqual, aes_enc, aes_dec,
   rsa_encrypt, rsa_decrypt, get_RSA_keys, make_RSA_keys, remove_RSA_keys,
+  make_KYBER_keys, get_KYBER_keys, remove_KYBER_keys, kyber_decrypt, kyber_encrypt,
   seal_encrypt, seal_decrypt, seal_add, seal_init, get_SEAL_keys, make_SEAL_keys, remove_SEAL_keys
 }
