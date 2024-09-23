@@ -15,15 +15,17 @@ const test=require('node:test'), assert=require('node:assert');
     await t.test("Encryption",async function(){
       const [prv,pub]=get_SEAL_keys("homomorphic")
       const plaintext="asdf", ciphertext=seal_encrypt(plaintext,pub)
-      assert.strictEqual(plaintext,seal_decrypt(ciphertext,prv), "decryption did not work")
+      const decrypted=seal_decrypt(ciphertext,prv).substring(0,plaintext.length)
+      assert.strictEqual(decrypted,plaintext, "decryption did not work")
     })
     await t.test("Addition",async function(){
       const [prv,pub]=get_SEAL_keys("homomorphic")
-      const plain_text1="aaaaa", plain_text2="aaaa"
-      const cipher_text1=seal_encrypt(plain_text1,pub), cipher_text2=seal_encrypt(plain_text2)
+      const plain_text1="aaaaa", plain_text2="aaaa", added="ÂÂÂÂa"
+      const cipher_text1=seal_encrypt(plain_text1,pub), cipher_text2=seal_encrypt(plain_text2,pub)
       const combined_ciphertext=seal_add(cipher_text1,cipher_text2)
-      const decrypted=seal_decrypt(combined_ciphertext,prv)
+      const decrypted=seal_decrypt(combined_ciphertext,prv).substring(0,plain_text1.length)
       console.log(decrypted)
+      assert.strictEqual(decrypted,added, "addition did not work")
     })
     remove_SEAL_keys("homomorphic")
   })

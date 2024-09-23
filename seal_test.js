@@ -58,7 +58,10 @@
   const plainText = encoder.encode(array)
 
   // Encrypt the PlainText
-  const cipherText = encryptor.encrypt(plainText)
+  //const cipherText = encryptor.encrypt(plainText) //option1
+  const _cipherText = encryptor.encrypt(plainText)
+  const cipherText = seal.CipherText()
+  cipherText.loadArray(context,_cipherText.saveArray()) //option2
   console.log("hm",cipherText.instance,cipherText.saveArray())
 
   // Add the CipherText to itself and store it in the destination parameter (itself)

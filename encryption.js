@@ -8,40 +8,45 @@ let seal=null, seal_generator=null, seal_encoder=null, seal_context=null, seal_e
 
 let ab_map=[], str_map={__proto__:null}, seal_map=new WeakMap()
 for(let i=0;i<256;i++){
-  ab_map[i]=String.fromCharCode(i);
-  str_map[ab_map[i]]=i;
+  ab_map[i]=String.fromCharCode(i)
+  str_map[ab_map[i]]=i
 }
 
 function str2ab(str,typedarray){
-  let buf=Buffer.alloc(str.length);
+  let buf=Buffer.alloc(str.length)
   for (let i=0;i<str.length;i++) buf[i]=str_map[str[i]];
-  return !typedarray? buf: new typedarray(buf);
+  return !typedarray? buf: new typedarray(buf)
 }
 function ab2str(buf,isUint8){
-  let arr=!isUint8? new Uint8Array(buf): buf, chars="";
+  let arr=!isUint8? new Uint8Array(buf): buf, chars=""
   for(let i=0;i<arr.length;i++) chars+=ab_map[arr[i]];
-  return chars;
+  return chars
 }
 function str2bfr(str,typedarray){
-  let buf=Buffer.alloc(str.length);
+  let buf=Buffer.alloc(str.length)
   for (let i=0;i<str.length;i++) buf[i]=str_map[str[i]];
-  return !typedarray? buf: new typedarray(buf);
+  return !typedarray? buf: new typedarray(buf)
 }
 function bfr2str(buf){
-  let chars="";
+  let chars=""
   for(let i=0;i<buf.length;i++) chars+=ab_map[buf[i]];
-  return chars;
+  return chars
 }
 function int32From(data){
   if(typeof data==="string") return str2ab(data,Int32Array);
   if(data[Symbol.toStringTag]!=="Int32Array") return new Int32Array(data);
-  return data;
+  return data
+}
+function uint8From(data){
+  if(typeof data==="string") return str2ab(data,Uint8Array);
+  if(data[Symbol.toStringTag]!=="Uint8Array") return new Uint8Array(data);
+  return data
 }
 function arraysEqual(arr1,arr2){
   if(arr1.length!==arr2.length) return false;
   for(let i=0;i<arr1.length;i++)
     if(arr1[i]!==arr2[i]) return false;
-  return true;
+  return true
 }
 
 function make_RSA_keys(key_name){
@@ -135,22 +140,23 @@ function remove_SEAL_keys(key_name){
 }
 function seal_decrypt(data,prv){
   if(!seal_map.has(prv)) seal_map.set(prv,seal.Decryptor(seal_context,prv));
-  const interface=seal_map.get(prv);
-  let result=interface.decrypt(seal_encoder.encode(int32From(data))).saveArray()
+  const interface=seal_map.get(prv)
+  const ciphertext=seal.CipherText()
+  ciphertext.loadArray(seal_context,uint8From(data))
+  const result=seal_encoder.decode( interface.decrypt(ciphertext) )
   return ab2str(result,true)
-  //return seal.Decryptor(seal_context, prv)
-  //.decrypt(seal_encoder.encode(int32From(data)))
 }
 function seal_encrypt(data,pub){
   if(!seal_map.has(pub)) seal_map.set(pub,seal.Encryptor(seal_context,pub));
-  const interface=seal_map.get(pub);
-  let result=interface.encrypt(seal_encoder.encode(int32From(data))).saveArray()
+  const interface=seal_map.get(pub)
+  const result=interface.encrypt(seal_encoder.encode(int32From(data))).saveArray()
   return ab2str(result,true)
-  //return seal.Encryptor(seal_context, pub)
-  //.encrypt(seal_encoder.encode(int32From(data)))
 }
 function seal_add(cipher_text1, cipher_text2){
-  return seal_evaluator.add(cipher_text1, cipher_text2)
+  const ciphertext1=seal.CipherText(), ciphertext2=seal.CipherText()
+  ciphertext1.loadArray(seal_context,uint8From(cipher_text1))
+  ciphertext2.loadArray(seal_context,uint8From(cipher_text2))
+  return ab2str( seal_evaluator.add(ciphertext1, ciphertext2).saveArray(),true )
 }
 
 async function aes_enc(data,key,s,throwErrors){
